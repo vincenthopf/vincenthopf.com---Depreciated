@@ -365,7 +365,10 @@
             
             // Network-node animation
             const canvas = document.getElementById('network-canvas');
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d', { willReadFrequently: false, alpha: true });
+            
+            // Detect mobile device
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
             // Set canvas dimensions
             function resizeCanvas() {
@@ -376,23 +379,25 @@
             // Initial resize
             resizeCanvas();
             
-            // Resize on window resize
-            window.addEventListener('resize', resizeCanvas);
+            // Resize on window resize - throttled for performance
+            let resizeTimeout;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(resizeCanvas, 200);
+            });
             
-            // Node properties
+            // Node properties - adjust based on device
             const nodes = [];
-            const nodeCount = 200;
+            const nodeCount = isMobile ? 100 : 200;
             const nodeSize = 1.5;
-            const nodeSpeed = 0.3;
-            const connectionDistance = 120;
+            const nodeSpeed = isMobile ? 0.2 : 0.3;
+            const connectionDistance = isMobile ? 80 : 120;
             
             // Mouse interaction
             let mouse = {
                 x: undefined,
                 y: undefined,
-                radius: 150,
-                active: false,
-                connect: true
+                radius: isMobile ? 100 : 150
             };
             
             // Track mouse position
@@ -401,27 +406,22 @@
                 mouse.y = event.y;
             });
             
-            // Track mouse click
+            // Track mouse movements without click repulsion
             window.addEventListener('mousedown', function() {
-                mouse.active = true;
-                mouse.connect = false;
-                mouse.radius = 200;
+                // No longer changing mouse.active to true
+                // Just keep the connection behavior
             });
             
             window.addEventListener('mouseup', function() {
-                mouse.active = false;
-                mouse.connect = true;
-                mouse.radius = 150;
+                // No state change needed
             });
             
-            // Touch support
+            // Touch support with no repulsion
             window.addEventListener('touchstart', function(event) {
                 const touch = event.touches[0];
                 mouse.x = touch.clientX;
                 mouse.y = touch.clientY;
-                mouse.active = true;
-                mouse.connect = false;
-                mouse.radius = 200;
+                // No longer setting mouse.active to true
             });
             
             window.addEventListener('touchmove', function(event) {
@@ -431,9 +431,7 @@
             });
             
             window.addEventListener('touchend', function() {
-                mouse.active = false;
-                mouse.connect = true;
-                mouse.radius = 150;
+                // No state change needed
             });
             
             // Mouse leaves window
@@ -444,7 +442,11 @@
             
             // Create nodes
             function createNodes() {
-                for (let i = 0; i < nodeCount; i++) {
+                nodes.length = 0; // Clear any existing nodes
+                const density = Math.min(canvas.width, canvas.height) / 1000;
+                const actualNodeCount = Math.floor(nodeCount * density);
+                
+                for (let i = 0; i < actualNodeCount; i++) {
                     const x = Math.random() * canvas.width;
                     const y = Math.random() * canvas.height;
                     const directionX = (Math.random() - 0.5) * nodeSpeed;
@@ -469,20 +471,48 @@
                 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
+                // Use a spatial hash grid for optimization
+                const gridSize = connectionDistance;
+                const grid = {};
+                
+                // Place nodes in grid cells
                 for (let i = 0; i < nodes.length; i++) {
-                    let node = nodes[i];
+                    const node = nodes[i];
+                    const cellX = Math.floor(node.x / gridSize);
+                    const cellY = Math.floor(node.y / gridSize);
+                    const cellKey = `${cellX},${cellY}`;
+                    
+                    if (!grid[cellKey]) {
+                        grid[cellKey] = [];
+                    }
+                    
+                    grid[cellKey].push(i);
                     
                     // Move nodes
                     node.x += node.directionX;
                     node.y += node.directionY;
                     
-                    // Bounce off edges
+                    // Bounce off edges - with slight random to prevent sticking
                     if (node.x < 0 || node.x > canvas.width) {
-                        node.directionX = -node.directionX;
+                        node.directionX = -node.directionX * (0.9 + Math.random() * 0.2);
+                        if (node.x < 0) node.x = 0;
+                        if (node.x > canvas.width) node.x = canvas.width;
                     }
                     if (node.y < 0 || node.y > canvas.height) {
-                        node.directionY = -node.directionY;
+                        node.directionY = -node.directionY * (0.9 + Math.random() * 0.2);
+                        if (node.y < 0) node.y = 0;
+                        if (node.y > canvas.height) node.y = canvas.height;
                     }
+                }
+                
+                // Draw nodes and connections with optimized neighbor finding
+                for (let i = 0; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    const cellX = Math.floor(node.x / gridSize);
+                    const cellY = Math.floor(node.y / gridSize);
+                    
+                    // Reset node size
+                    node.size = node.baseSize;
                     
                     // Mouse interaction
                     if (mouse.x !== undefined && mouse.y !== undefined) {
@@ -494,8 +524,8 @@
                             // Increase node size near mouse
                             node.size = nodeSize * 2;
                             
-                            // Connect with mouse
-                            if (mouse.connect && distance < mouse.radius) {
+                            // Connect with mouse (always connect, no repulsion logic)
+                            if (distance < mouse.radius) {
                                 ctx.beginPath();
                                 ctx.moveTo(node.x, node.y);
                                 ctx.lineTo(mouse.x, mouse.y);
@@ -503,29 +533,9 @@
                                 // Make mouse connections more prominent
                                 const opacity = 1 - (distance / mouse.radius);
                                 ctx.strokeStyle = accentColor.replace(')', ', ' + opacity + ')').replace('rgb', 'rgba');
-                                ctx.lineWidth = opacity * 2;
+                                ctx.lineWidth = opacity * 1.5;
                                 ctx.stroke();
                             }
-                            
-                            // Push nodes away from mouse click
-                            if (mouse.active && distance < mouse.radius) {
-                                const force = (mouse.radius - distance) / mouse.radius;
-                                const forceDirectionX = dx / distance;
-                                const forceDirectionY = dy / distance;
-                                
-                                const maxForce = 10;
-                                
-                                // Apply repulsion force (stronger)
-                                node.directionX -= forceDirectionX * force * maxForce;
-                                node.directionY -= forceDirectionY * force * maxForce;
-                                
-                                // Add speed decay to eventually settle
-                                node.directionX *= 0.98;
-                                node.directionY *= 0.98;
-                            }
-                        } else {
-                            // Reset node size
-                            node.size = node.baseSize;
                         }
                     }
                     
@@ -535,36 +545,78 @@
                     ctx.fillStyle = nodeColor;
                     ctx.fill();
                     
-                    // Connect nodes with each other
-                    for (let j = i + 1; j < nodes.length; j++) {
-                        let node2 = nodes[j];
-                        const dx = node.x - node2.x;
-                        const dy = node.y - node2.y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        
-                        if (distance < connectionDistance) {
-                            // Opacity based on distance
-                            const opacity = 1 - (distance / connectionDistance);
-                            ctx.beginPath();
-                            ctx.moveTo(node.x, node.y);
-                            ctx.lineTo(node2.x, node2.y);
-                            ctx.strokeStyle = lineColor.replace('0.1', opacity * 0.5);
-                            ctx.lineWidth = opacity * 0.5;
-                            ctx.stroke();
+                    // Check neighboring cells for connections
+                    for (let nx = cellX - 1; nx <= cellX + 1; nx++) {
+                        for (let ny = cellY - 1; ny <= cellY + 1; ny++) {
+                            const neighborCellKey = `${nx},${ny}`;
+                            const neighborIndices = grid[neighborCellKey] || [];
+                            
+                            for (let j = 0; j < neighborIndices.length; j++) {
+                                const neighborIndex = neighborIndices[j];
+                                
+                                // Skip self and already processed connections
+                                if (neighborIndex <= i) continue;
+                                
+                                const node2 = nodes[neighborIndex];
+                                const dx = node.x - node2.x;
+                                const dy = node.y - node2.y;
+                                const distance = Math.sqrt(dx * dx + dy * dy);
+                                
+                                if (distance < connectionDistance) {
+                                    // Opacity based on distance
+                                    const opacity = 1 - (distance / connectionDistance);
+                                    ctx.beginPath();
+                                    ctx.moveTo(node.x, node.y);
+                                    ctx.lineTo(node2.x, node2.y);
+                                    ctx.strokeStyle = lineColor.replace('0.1', opacity * 0.5);
+                                    ctx.lineWidth = isMobile ? opacity * 0.4 : opacity * 0.5;
+                                    ctx.stroke();
+                                }
+                            }
                         }
                     }
                 }
             }
             
-            // Animation loop
-            function animate() {
-                updateNodes();
-                requestAnimationFrame(animate);
+            // Animation loop with performance optimization
+            let lastTime = 0;
+            const frameThreshold = isMobile ? 1000/30 : 1000/60; // 30fps for mobile, 60fps for desktop
+            
+            function animate(timestamp) {
+                const deltaTime = timestamp - lastTime;
+                
+                // Skip frames for performance if needed
+                if (deltaTime > frameThreshold || lastTime === 0) {
+                    updateNodes();
+                    lastTime = timestamp;
+                }
+                
+                // Only request animation frame if document is visible
+                if (!document.hidden) {
+                    requestAnimationFrame(animate);
+                }
             }
+            
+            // Handle visibility change to pause animation when tab is not active
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    // Pause animation
+                    lastTime = 0;
+                } else {
+                    // Resume animation
+                    requestAnimationFrame(animate);
+                }
+            });
+            
+            // Handle resize properly
+            window.addEventListener('resize', function() {
+                resizeCanvas();
+                createNodes(); // Recreate nodes on resize for better distribution
+            });
             
             // Initialize
             createNodes();
-            animate();
+            animate(0);
         </script>
     </footer>
 </body>

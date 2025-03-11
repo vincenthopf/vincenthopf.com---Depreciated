@@ -18,6 +18,7 @@
             --text-color: #37352f;
             --surface-color: rgba(255, 255, 255, 0.85);
             --border-color: rgba(255, 255, 255, 0.3);
+            --input-border-color: #cccccc;
             --hover-color: rgba(0, 0, 0, 0.05);
             --node-color: rgba(0, 0, 0, 0.4);
             --line-color: rgba(0, 0, 0, 0.15);
@@ -29,6 +30,7 @@
             --text-color: #f9fafb;
             --surface-color: rgba(30, 30, 30, 0.85);
             --border-color: rgba(50, 50, 50, 0.5);
+            --input-border-color: rgba(80, 80, 80, 0.8);
             --hover-color: rgba(255, 255, 255, 0.05);
             --node-color: rgba(255, 255, 255, 0.4);
             --line-color: rgba(255, 255, 255, 0.15);
@@ -274,7 +276,7 @@
             padding: 0.75rem;
             background-color: var(--bg-color);
             color: var(--text-color);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--input-border-color);
             border-radius: 6px;
             font-family: 'Inter', sans-serif;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -349,6 +351,7 @@
         .dark .form-group input,
         .dark .form-group textarea {
             background-color: rgba(30, 30, 30, 0.8);
+            border-color: rgba(80, 80, 80, 0.8);
         }
 
         footer {

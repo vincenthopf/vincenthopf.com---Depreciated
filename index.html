@@ -16,7 +16,7 @@
             --surface-color: #f7f6f3;
             --border-color: #eee;
             --hover-color: #efefef;
-            --accent-color: #111;
+            --accent-color: rgba(0, 0, 0, 0.7);
             --node-color: rgba(0, 0, 0, 0.2);
             --line-color: rgba(0, 0, 0, 0.1);
         }
@@ -28,7 +28,7 @@
             --surface-color: #252525;
             --border-color: #333;
             --hover-color: #2f2f2f;
-            --accent-color: #f0f0f0;
+            --accent-color: rgba(255, 255, 255, 0.7);
             --node-color: rgba(255, 255, 255, 0.2);
             --line-color: rgba(255, 255, 255, 0.1);
         }
@@ -40,7 +40,7 @@
                 --surface-color: #252525;
                 --border-color: #333;
                 --hover-color: #2f2f2f;
-                --accent-color: #f0f0f0;
+                --accent-color: rgba(255, 255, 255, 0.7);
                 --node-color: rgba(255, 255, 255, 0.2);
                 --line-color: rgba(255, 255, 255, 0.1);
             }
@@ -381,17 +381,18 @@
             
             // Node properties
             const nodes = [];
-            const nodeCount = 50;
-            const nodeSize = 2;
-            const nodeSpeed = 0.5;
-            const connectionDistance = 150;
+            const nodeCount = 200;
+            const nodeSize = 1.5;
+            const nodeSpeed = 0.3;
+            const connectionDistance = 120;
             
             // Mouse interaction
             let mouse = {
-                x: null,
-                y: null,
-                radius: 100,
-                active: false
+                x: undefined,
+                y: undefined,
+                radius: 150,
+                active: false,
+                connect: true
             };
             
             // Track mouse position
@@ -403,12 +404,14 @@
             // Track mouse click
             window.addEventListener('mousedown', function() {
                 mouse.active = true;
-                mouse.radius = 180;
+                mouse.connect = false;
+                mouse.radius = 200;
             });
             
             window.addEventListener('mouseup', function() {
                 mouse.active = false;
-                mouse.radius = 100;
+                mouse.connect = true;
+                mouse.radius = 150;
             });
             
             // Touch support
@@ -417,7 +420,8 @@
                 mouse.x = touch.clientX;
                 mouse.y = touch.clientY;
                 mouse.active = true;
-                mouse.radius = 180;
+                mouse.connect = false;
+                mouse.radius = 200;
             });
             
             window.addEventListener('touchmove', function(event) {
@@ -428,7 +432,8 @@
             
             window.addEventListener('touchend', function() {
                 mouse.active = false;
-                mouse.radius = 100;
+                mouse.connect = true;
+                mouse.radius = 150;
             });
             
             // Mouse leaves window
@@ -460,6 +465,7 @@
             function updateNodes() {
                 const nodeColor = getComputedStyle(document.documentElement).getPropertyValue('--node-color');
                 const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--line-color');
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
                 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
@@ -488,12 +494,34 @@
                             // Increase node size near mouse
                             node.size = nodeSize * 2;
                             
+                            // Connect with mouse
+                            if (mouse.connect && distance < mouse.radius) {
+                                ctx.beginPath();
+                                ctx.moveTo(node.x, node.y);
+                                ctx.lineTo(mouse.x, mouse.y);
+                                
+                                // Make mouse connections more prominent
+                                const opacity = 1 - (distance / mouse.radius);
+                                ctx.strokeStyle = accentColor.replace(')', ', ' + opacity + ')').replace('rgb', 'rgba');
+                                ctx.lineWidth = opacity * 2;
+                                ctx.stroke();
+                            }
+                            
                             // Push nodes away from mouse click
                             if (mouse.active && distance < mouse.radius) {
-                                const forceX = dx / distance * 5;
-                                const forceY = dy / distance * 5;
-                                node.directionX = (node.directionX - forceX) * 0.2;
-                                node.directionY = (node.directionY - forceY) * 0.2;
+                                const force = (mouse.radius - distance) / mouse.radius;
+                                const forceDirectionX = dx / distance;
+                                const forceDirectionY = dy / distance;
+                                
+                                const maxForce = 10;
+                                
+                                // Apply repulsion force (stronger)
+                                node.directionX -= forceDirectionX * force * maxForce;
+                                node.directionY -= forceDirectionY * force * maxForce;
+                                
+                                // Add speed decay to eventually settle
+                                node.directionX *= 0.98;
+                                node.directionY *= 0.98;
                             }
                         } else {
                             // Reset node size
@@ -507,7 +535,7 @@
                     ctx.fillStyle = nodeColor;
                     ctx.fill();
                     
-                    // Connect nodes
+                    // Connect nodes with each other
                     for (let j = i + 1; j < nodes.length; j++) {
                         let node2 = nodes[j];
                         const dx = node.x - node2.x;
@@ -521,7 +549,7 @@
                             ctx.moveTo(node.x, node.y);
                             ctx.lineTo(node2.x, node2.y);
                             ctx.strokeStyle = lineColor.replace('0.1', opacity * 0.5);
-                            ctx.lineWidth = 1;
+                            ctx.lineWidth = opacity * 0.5;
                             ctx.stroke();
                         }
                     }

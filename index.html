@@ -1,22 +1,4 @@
-/* Consistent widths for form elements */
-        .form-group input,
-        .form-group textarea,
-        .submit-btn {
-            width: 100%;
-        }        /* Force center alignment for critical elements */
-        h1, h2, p, label {
-            text-align: center !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-        }
-        
-        /* General section styles */
-        section, .social-section, .contact-section {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -98,21 +80,18 @@
             z-index: -1;
         }
 
-        /* Container layout */
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 0 1.5rem;
             position: relative;
             z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         header {
             text-align: center;
-            padding: 2rem 0 0;
+            padding: 4rem 0 1rem;
+            margin-bottom: 1rem;
             position: relative;
         }
 
@@ -144,12 +123,10 @@
             font-size: 1rem;
         }
 
-        /* Profile section */
         .profile {
-            margin-bottom: 2.5rem;
-            padding: 0;
+            margin-bottom: 3rem;
+            padding: 1rem;
             border-radius: 8px;
-            text-align: center;
         }
 
         .profile-pic {
@@ -173,24 +150,19 @@
             opacity: 0.75;
         }
 
+        /* General section styles */
+        section {
+            text-align: center;
+        }
+
+        /* Section spacing */
         .social-section, .contact-section {
-            width: 100%;
-            max-width: 450px;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 4rem;
-            margin-bottom: 2rem;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
         }
         
-        /* Social section title fix */
         .social-section h2, .contact-section h2 {
-            text-align: center;
-            width: 100%;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
         }
 
         h2 {
@@ -200,22 +172,21 @@
             opacity: 0.8;
         }
 
-        /* Social icons styling */
+        /* Social links styling */
         .social-links {
             padding: 0;
             background-color: transparent;
             border: none;
-            width: 100%;
-            max-width: 450px;
         }
 
         .social-icons {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
             justify-content: center;
             align-items: center;
             margin: 0 auto;
+            max-width: 450px;
             width: 100%;
         }
 
@@ -233,7 +204,6 @@
             position: relative;
             overflow: hidden;
             width: 100%;
-            max-width: 450px;
             z-index: 2;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -289,7 +259,6 @@
 
         .form-group {
             margin-bottom: 1.25rem;
-            text-align: center;
         }
 
         .form-group label {
@@ -297,7 +266,6 @@
             margin-bottom: 0.5rem;
             font-weight: 500;
             opacity: 0.8;
-            text-align: center;
         }
 
         .form-group input,
@@ -394,7 +362,6 @@
             z-index: 1;
         }
 
-        /* Mobile adjustments */
         @media (max-width: 768px) {
             .profile h1 {
                 font-size: 2rem;
@@ -403,11 +370,6 @@
             .theme-toggle {
                 top: 1rem;
                 right: 1rem;
-            }
-            
-            .social-section, .contact-section {
-                margin-top: 3rem;
-                margin-bottom: 1.5rem;
             }
         }
     </style>
@@ -430,7 +392,7 @@
 
         <main>
             <section class="social-section">
-                <h2 style="text-align: center; width: 100%;">Connect with me</h2>
+                <h2>Connect with me</h2>
                 <div class="social-links">
                     <div class="social-icons">
                         <a href="https://www.instagram.com/vincenthopf/" class="social-icon" target="_blank">
@@ -450,7 +412,7 @@
             </section>
 
             <section class="contact-section">
-                <h2 style="text-align: center; width: 100%;">Get in Touch</h2>
+                <h2>Get in Touch</h2>
                 <div class="form-container">
                     <form id="contact-form" action="https://formspree.io/f/mkgjnzza" method="POST">
                         <div class="form-group">

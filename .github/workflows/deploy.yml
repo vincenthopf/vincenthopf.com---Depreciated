@@ -5,13 +5,11 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: write
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -25,10 +23,15 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Copy assets directory
+        run: |
+          mkdir -p github-pages-deploy-action-temp-deployment-folder/assets
+          cp -r assets/* github-pages-deploy-action-temp-deployment-folder/assets/
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: . # The folder containing your index.html
           branch: gh-pages # The branch the action should deploy to
-          token: ${{ secrets.GITHUB_TOKEN }} # This uses the built-in token
-          clean: true # Automatically remove deleted files from the deploy branch
+          token: ${{ secrets.GITHUB_TOKEN }}
+          clean: true

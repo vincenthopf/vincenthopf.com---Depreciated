@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Site</title>
+    <title>Vincent Hopf</title>
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Inter font (similar to Notion) -->
@@ -17,6 +17,8 @@
             --border-color: #eee;
             --hover-color: #efefef;
             --accent-color: #111;
+            --node-color: rgba(0, 0, 0, 0.2);
+            --line-color: rgba(0, 0, 0, 0.1);
         }
 
         [data-theme="dark"] {
@@ -27,6 +29,8 @@
             --border-color: #333;
             --hover-color: #2f2f2f;
             --accent-color: #f0f0f0;
+            --node-color: rgba(255, 255, 255, 0.2);
+            --line-color: rgba(255, 255, 255, 0.1);
         }
 
         @media (prefers-color-scheme: dark) {
@@ -37,6 +41,8 @@
                 --border-color: #333;
                 --hover-color: #2f2f2f;
                 --accent-color: #f0f0f0;
+                --node-color: rgba(255, 255, 255, 0.2);
+                --line-color: rgba(255, 255, 255, 0.1);
             }
         }
 
@@ -53,12 +59,27 @@
             background-color: var(--bg-color);
             transition: background-color 0.3s ease, color 0.3s ease;
             letter-spacing: -0.011em;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #network-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.7;
+            pointer-events: none;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         header {
@@ -81,6 +102,7 @@
             gap: 0.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            z-index: 10;
         }
 
         .theme-toggle:hover {
@@ -93,6 +115,10 @@
 
         .profile {
             margin-bottom: 1.5rem;
+            background-color: var(--bg-color);
+            padding: 1rem;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
         }
 
         .profile-pic {
@@ -131,6 +157,7 @@
             padding: 1.5rem;
             border-radius: 4px;
             border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px);
         }
 
         .social-icons {
@@ -154,6 +181,7 @@
             position: relative;
             overflow: hidden;
             min-width: 140px;
+            z-index: 2;
         }
 
         .social-icon:before {
@@ -220,6 +248,9 @@
             opacity: 0.6;
             font-size: 0.85rem;
             border-top: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1;
+            background-color: var(--bg-color);
         }
 
         @media (max-width: 768px) {
@@ -239,6 +270,7 @@
     </style>
 </head>
 <body>
+    <canvas id="network-canvas"></canvas>
     <div class="container">
         <header>
             <div class="theme-toggle" id="theme-toggle">
@@ -330,6 +362,181 @@
                     themeText.textContent = 'Dark Mode';
                 }
             }
+            
+            // Network-node animation
+            const canvas = document.getElementById('network-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas dimensions
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            // Initial resize
+            resizeCanvas();
+            
+            // Resize on window resize
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Node properties
+            const nodes = [];
+            const nodeCount = 50;
+            const nodeSize = 2;
+            const nodeSpeed = 0.5;
+            const connectionDistance = 150;
+            
+            // Mouse interaction
+            let mouse = {
+                x: null,
+                y: null,
+                radius: 100,
+                active: false
+            };
+            
+            // Track mouse position
+            window.addEventListener('mousemove', function(event) {
+                mouse.x = event.x;
+                mouse.y = event.y;
+            });
+            
+            // Track mouse click
+            window.addEventListener('mousedown', function() {
+                mouse.active = true;
+                mouse.radius = 180;
+            });
+            
+            window.addEventListener('mouseup', function() {
+                mouse.active = false;
+                mouse.radius = 100;
+            });
+            
+            // Touch support
+            window.addEventListener('touchstart', function(event) {
+                const touch = event.touches[0];
+                mouse.x = touch.clientX;
+                mouse.y = touch.clientY;
+                mouse.active = true;
+                mouse.radius = 180;
+            });
+            
+            window.addEventListener('touchmove', function(event) {
+                const touch = event.touches[0];
+                mouse.x = touch.clientX;
+                mouse.y = touch.clientY;
+            });
+            
+            window.addEventListener('touchend', function() {
+                mouse.active = false;
+                mouse.radius = 100;
+            });
+            
+            // Mouse leaves window
+            window.addEventListener('mouseout', function() {
+                mouse.x = undefined;
+                mouse.y = undefined;
+            });
+            
+            // Create nodes
+            function createNodes() {
+                for (let i = 0; i < nodeCount; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const directionX = (Math.random() - 0.5) * nodeSpeed;
+                    const directionY = (Math.random() - 0.5) * nodeSpeed;
+                    
+                    nodes.push({
+                        x: x,
+                        y: y,
+                        directionX: directionX,
+                        directionY: directionY,
+                        size: nodeSize,
+                        baseSize: nodeSize
+                    });
+                }
+            }
+            
+            // Update and draw nodes
+            function updateNodes() {
+                const nodeColor = getComputedStyle(document.documentElement).getPropertyValue('--node-color');
+                const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--line-color');
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                for (let i = 0; i < nodes.length; i++) {
+                    let node = nodes[i];
+                    
+                    // Move nodes
+                    node.x += node.directionX;
+                    node.y += node.directionY;
+                    
+                    // Bounce off edges
+                    if (node.x < 0 || node.x > canvas.width) {
+                        node.directionX = -node.directionX;
+                    }
+                    if (node.y < 0 || node.y > canvas.height) {
+                        node.directionY = -node.directionY;
+                    }
+                    
+                    // Mouse interaction
+                    if (mouse.x !== undefined && mouse.y !== undefined) {
+                        const dx = mouse.x - node.x;
+                        const dy = mouse.y - node.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < mouse.radius) {
+                            // Increase node size near mouse
+                            node.size = nodeSize * 2;
+                            
+                            // Push nodes away from mouse click
+                            if (mouse.active && distance < mouse.radius) {
+                                const forceX = dx / distance * 5;
+                                const forceY = dy / distance * 5;
+                                node.directionX = (node.directionX - forceX) * 0.2;
+                                node.directionY = (node.directionY - forceY) * 0.2;
+                            }
+                        } else {
+                            // Reset node size
+                            node.size = node.baseSize;
+                        }
+                    }
+                    
+                    // Draw node
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+                    ctx.fillStyle = nodeColor;
+                    ctx.fill();
+                    
+                    // Connect nodes
+                    for (let j = i + 1; j < nodes.length; j++) {
+                        let node2 = nodes[j];
+                        const dx = node.x - node2.x;
+                        const dy = node.y - node2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < connectionDistance) {
+                            // Opacity based on distance
+                            const opacity = 1 - (distance / connectionDistance);
+                            ctx.beginPath();
+                            ctx.moveTo(node.x, node.y);
+                            ctx.lineTo(node2.x, node2.y);
+                            ctx.strokeStyle = lineColor.replace('0.1', opacity * 0.5);
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+            
+            // Animation loop
+            function animate() {
+                updateNodes();
+                requestAnimationFrame(animate);
+            }
+            
+            // Initialize
+            createNodes();
+            animate();
         </script>
     </footer>
 </body>

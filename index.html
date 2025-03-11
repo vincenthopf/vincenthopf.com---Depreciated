@@ -404,7 +404,6 @@
             <section>
                 <h2>Get in Touch</h2>
                 <div class="form-container">
-                    <!-- Added _next parameter to redirect back to the site after submission -->
                     <form id="contact-form" action="https://formspree.io/f/mkgjnzza" method="POST">
                         <div class="form-group">
                             <label for="name">Name</label>
@@ -656,10 +655,8 @@
             const formStatus = document.getElementById('form-status');
             
             if (form) {
-                // Instead of using AJAX, we'll use the traditional form submission method
-                // This will work without needing custom keys or disabling reCAPTCHA
-                form.addEventListener('submit', function(e) {
-                    // Don't prevent default - let the form submit normally
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
                     
                     // Show loading state
                     const submitBtn = form.querySelector('.submit-btn');
@@ -669,11 +666,47 @@
                     btnText.textContent = 'Sending...';
                     submitBtn.disabled = true;
                     
-                    // Form will submit normally to Formspree
-                    // We add a small delay to show the loading state
-                    setTimeout(() => {
-                        // The page will redirect to Formspree's thank you page
-                    }, 500);
+                    try {
+                        // Get form action from the form's action attribute
+                        const formAction = form.getAttribute('action');
+                        
+                        // Prepare form data
+                        const formData = new FormData(form);
+                        
+                        // Send form data
+                        const response = await fetch(formAction, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        // Handle response
+                        if (response.ok) {
+                            // Success
+                            form.reset();
+                            formStatus.textContent = 'Message sent successfully!';
+                            formStatus.className = 'form-status success';
+                            
+                            // Clear success message after 5 seconds
+                            setTimeout(() => {
+                                formStatus.textContent = '';
+                                formStatus.className = 'form-status';
+                            }, 5000);
+                        } else {
+                            // Error
+                            const data = await response.json();
+                            throw new Error(data.error || 'Something went wrong. Please try again.');
+                        }
+                    } catch (error) {
+                        formStatus.textContent = error.message;
+                        formStatus.className = 'form-status error';
+                    } finally {
+                        // Reset button state
+                        btnText.textContent = originalBtnText;
+                        submitBtn.disabled = false;
+                    }
                 });
             }
         });

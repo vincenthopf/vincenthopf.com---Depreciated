@@ -19,9 +19,18 @@
             --accent-color: #111;
         }
 
+        [data-theme="dark"] {
+            /* Dark mode colors */
+            --bg-color: #191919;
+            --text-color: #e6e6e6;
+            --surface-color: #252525;
+            --border-color: #333;
+            --hover-color: #2f2f2f;
+            --accent-color: #f0f0f0;
+        }
+
         @media (prefers-color-scheme: dark) {
-            :root {
-                /* Dark mode colors */
+            :root:not([data-theme="light"]) {
                 --bg-color: #191919;
                 --text-color: #e6e6e6;
                 --surface-color: #252525;
@@ -56,6 +65,30 @@
             text-align: center;
             padding: 4rem 0 2rem;
             margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 1.5rem;
+            right: 0;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 0.5rem 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-color);
+        }
+
+        .theme-toggle i {
+            font-size: 1rem;
         }
 
         .profile {
@@ -83,6 +116,7 @@
 
         section {
             margin-bottom: 3rem;
+            text-align: center;
         }
 
         h2 {
@@ -103,7 +137,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            justify-content: flex-start;
+            justify-content: center;
         }
 
         .social-icon {
@@ -196,12 +230,21 @@
             .social-icons {
                 gap: 1rem;
             }
+            
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
+            <div class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+                <span>Toggle Theme</span>
+            </div>
             <div class="profile">
                 <img src="/api/placeholder/100/100" alt="Vincent Hopf" class="profile-pic">
                 <h1>Vincent Hopf</h1>
@@ -252,6 +295,41 @@
         <p>ABN: 72 497 571 166</p>
         <script>
             document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Theme toggling functionality
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = themeToggle.querySelector('i');
+            const themeText = themeToggle.querySelector('span');
+            
+            // Check for saved theme preference or use system preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                updateThemeToggle(savedTheme);
+            }
+            
+            // Theme toggle event listener
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme') || 
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                updateThemeToggle(newTheme);
+            });
+            
+            function updateThemeToggle(theme) {
+                if (theme === 'dark') {
+                    themeIcon.className = 'fas fa-sun';
+                    themeText.textContent = 'Light Mode';
+                } else {
+                    themeIcon.className = 'fas fa-moon';
+                    themeText.textContent = 'Dark Mode';
+                }
+            }
         </script>
     </footer>
 </body>

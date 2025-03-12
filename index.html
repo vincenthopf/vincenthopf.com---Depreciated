@@ -596,9 +596,9 @@
                                     `rgba(0, 0, 0, ${0.2 * (1 - distance / this.mouseRadius)})`;
                                 this.ctx.stroke();
                                 
-                                // Subtle attraction to mouse
+                                // Stronger attraction to mouse
                                 const angle = Math.atan2(dy, dx);
-                                const force = 0.3 * (1 - distance / this.mouseRadius);
+                                const force = 0.8 * (1 - distance / this.mouseRadius);
                                 p.x -= Math.cos(angle) * force;
                                 p.y -= Math.sin(angle) * force;
                             }
@@ -612,6 +612,14 @@
                         
                         // Clear connections array
                         p.connections = [];
+                    }
+                    
+                    // Draw mouse cursor node if mouse is on canvas
+                    if (this.mousePosition.x !== null) {
+                        this.ctx.beginPath();
+                        this.ctx.arc(this.mousePosition.x, this.mousePosition.y, 3, 0, Math.PI * 2);
+                        this.ctx.fillStyle = this.isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)';
+                        this.ctx.fill();
                     }
                     
                     // Draw connections - optimized to check fewer pairs

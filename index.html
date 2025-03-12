@@ -22,6 +22,7 @@
             --hover-color: rgba(0, 0, 0, 0.05);
             --node-color: rgba(0, 0, 0, 0.4);
             --line-color: rgba(0, 0, 0, 0.15);
+            --accent-color: #37352f;
         }
 
         /* Dark mode colors */
@@ -34,6 +35,7 @@
             --hover-color: rgba(255, 255, 255, 0.05);
             --node-color: rgba(255, 255, 255, 0.4);
             --line-color: rgba(255, 255, 255, 0.15);
+            --accent-color: #f9fafb;
         }
 
         /* System preference detection */
@@ -49,9 +51,11 @@
                 --text-color: #f9fafb;
                 --surface-color: rgba(30, 30, 30, 0.85);
                 --border-color: rgba(50, 50, 50, 0.5);
+                --input-border-color: rgba(80, 80, 80, 0.8);
                 --hover-color: rgba(255, 255, 255, 0.05);
                 --node-color: rgba(255, 255, 255, 0.4);
                 --line-color: rgba(255, 255, 255, 0.15);
+                --accent-color: #f9fafb;
             }
         }
 
@@ -158,12 +162,12 @@
         }
 
         /* Section spacing */
-        .social-section, .contact-section {
+        .social-section {
             margin-top: 3rem;
             margin-bottom: 3rem;
         }
         
-        .social-section h2, .contact-section h2 {
+        .social-section h2 {
             margin-bottom: 0.75rem;
         }
 
@@ -239,24 +243,94 @@
             font-weight: 500;
         }
 
-        /* Form Styles */
-        .form-container {
-            width: 100%;
-            max-width: 450px;
-            margin: 0 auto;
-            padding: 1.25rem;
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        /* Chat Button and Form Styles */
+        .chat-button {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .form-container:hover {
+        .chat-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+        }
+
+        .chat-button i {
+            font-size: 1.5rem;
+        }
+
+        .contact-popup {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 350px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .contact-popup.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .popup-header {
+            padding: 1rem;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .close-popup {
+            background: none;
+            border: none;
+            color: var(--bg-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-popup:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .popup-body {
+            padding: 1.25rem;
         }
 
         .form-group {
@@ -268,6 +342,7 @@
             margin-bottom: 0.5rem;
             font-weight: 500;
             opacity: 0.8;
+            font-size: 0.9rem;
         }
 
         .form-group input,
@@ -280,6 +355,7 @@
             border-radius: 6px;
             font-family: 'Inter', sans-serif;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 0.9rem;
         }
 
         .form-group input:focus,
@@ -302,7 +378,7 @@
             gap: 0.5rem;
             width: 100%;
             padding: 0.75rem 1.25rem;
-            background-color: var(--text-color);
+            background-color: var(--accent-color);
             color: var(--bg-color);
             border: none;
             border-radius: 6px;
@@ -337,6 +413,7 @@
             text-align: center;
             font-weight: 500;
             min-height: 24px;
+            font-size: 0.9rem;
         }
 
         .form-status.success {
@@ -351,7 +428,7 @@
         .dark .form-group input,
         .dark .form-group textarea {
             background-color: rgba(30, 30, 30, 0.8);
-            border-color: rgba(80, 80, 80, 0.8);
+            border-color: var(--input-border-color);
         }
 
         footer {
@@ -365,6 +442,7 @@
             z-index: 1;
         }
 
+        /* Mobile adjustments */
         @media (max-width: 768px) {
             .profile h1 {
                 font-size: 2rem;
@@ -373,6 +451,14 @@
             .theme-toggle {
                 top: 1rem;
                 right: 1rem;
+            }
+            
+            .contact-popup {
+                width: 100%;
+                max-width: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 12px 12px 0 0;
             }
         }
     </style>
@@ -413,37 +499,48 @@
                     </div>
                 </div>
             </section>
-
-            <section class="contact-section">
-                <h2>Get in Touch</h2>
-                <div class="form-container">
-                    <form id="contact-form" action="https://formspree.io/f/mkgjnzza" method="POST">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" name="message" rows="4" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn">
-                            <span class="btn-text">Send Message</span>
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                        <div id="form-status" class="form-status"></div>
-                    </form>
-                </div>
-            </section>
         </main>
 
         <footer>
             <p>&copy; <span id="current-year"></span> Vincent Hopf</p>
             <p>ABN: 72 497 571 166</p>
         </footer>
+    </div>
+
+    <!-- Chat button -->
+    <div class="chat-button" id="chat-button">
+        <i class="fas fa-comment"></i>
+    </div>
+
+    <!-- Contact Form Popup -->
+    <div class="contact-popup" id="contact-popup">
+        <div class="popup-header">
+            <h3>Get in Touch</h3>
+            <button class="close-popup" id="close-popup">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="popup-body">
+            <form id="contact-form" action="https://formspree.io/f/mkgjnzza" method="POST">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <span class="btn-text">Send Message</span>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+                <div id="form-status" class="form-status"></div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -490,6 +587,23 @@
                 themeText.textContent = 'Dark Mode';
             }
         }
+        
+        // Chat popup functionality
+        const chatButton = document.getElementById('chat-button');
+        const contactPopup = document.getElementById('contact-popup');
+        const closePopup = document.getElementById('close-popup');
+        
+        chatButton.addEventListener('click', () => {
+            contactPopup.classList.add('active');
+            chatButton.style.display = 'none';
+        });
+        
+        closePopup.addEventListener('click', () => {
+            contactPopup.classList.remove('active');
+            setTimeout(() => {
+                chatButton.style.display = 'flex';
+            }, 300);
+        });
         
         // Network background animation
         class NetworkAnimation {
@@ -702,11 +816,19 @@
                             formStatus.textContent = 'Message sent successfully!';
                             formStatus.className = 'form-status success';
                             
-                            // Clear success message after 5 seconds
+                            // Close popup after successful submission with a delay
                             setTimeout(() => {
-                                formStatus.textContent = '';
-                                formStatus.className = 'form-status';
-                            }, 5000);
+                                contactPopup.classList.remove('active');
+                                setTimeout(() => {
+                                    chatButton.style.display = 'flex';
+                                    // Reset form status after popup is closed
+                                    setTimeout(() => {
+                                        formStatus.textContent = '';
+                                        formStatus.className = 'form-status';
+                                    }, 1000);
+                                }, 300);
+                            }, 2000);
+                            
                         } else {
                             // Error
                             const data = await response.json();

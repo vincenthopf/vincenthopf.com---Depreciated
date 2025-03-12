@@ -3,20 +3,28 @@
             margin-top: 3rem;
             margin-bottom: 3rem;
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .notion-section h2 {
             margin-bottom: 0.75rem;
+            width: 100%;
+            text-align: center;
         }
         
         .notion-embed {
             width: 100%;
+            max-width: 800px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            height: auto;
         }
         
         .notion-embed:hover {
@@ -27,6 +35,16 @@
         .notion-embed iframe {
             display: block;
             border-radius: 8px;
+            width: 100%;
+            min-height: 800px;
+            border: none;
+        }
+        
+        /* Responsive adjustments for Notion embed */
+        @media (max-width: 850px) {
+            .notion-embed {
+                max-width: 100%;
+            }
         }<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -532,7 +550,7 @@
             <section class="notion-section">
                 <h2>My Posts</h2>
                 <div class="notion-embed">
-                    <iframe src="https://vjh.notion.site/ebd/1b4aa93cf2f08084aab5f3574a4831a9" width="100%" height="600" frameborder="0" allowfullscreen></iframe>
+                    <iframe id="notion-frame" src="https://vjh.notion.site/ebd/1b4aa93cf2f08084aab5f3574a4831a9" style="width:100%; min-height:800px; border:none; border-radius:8px;" scrolling="auto" allowfullscreen></iframe>
                 </div>
             </section>
         </main>
@@ -812,6 +830,36 @@
             // Initialize network animation
             const canvas = document.getElementById('network-canvas');
             window.networkAnimation = new NetworkAnimation(canvas);
+            
+            // Attempt to adjust iframe height dynamically
+            const notionFrame = document.getElementById('notion-frame');
+            if (notionFrame) {
+                // Set initial height
+                notionFrame.onload = function() {
+                    // Try to adjust height after iframe loads
+                    setTimeout(adjustIframeHeight, 1000);
+                };
+                
+                // Function to adjust iframe height
+                function adjustIframeHeight() {
+                    try {
+                        // This may not work due to cross-origin restrictions
+                        const frameHeight = notionFrame.contentWindow.document.body.scrollHeight;
+                        if (frameHeight > 800) {
+                            notionFrame.style.height = frameHeight + 'px';
+                        }
+                    } catch(e) {
+                        console.log("Cannot access iframe content due to cross-origin policy");
+                        // Fallback: Use a reasonable height
+                        notionFrame.style.height = '1200px';
+                    }
+                }
+                
+                // Also adjust on window resize
+                window.addEventListener('resize', function() {
+                    setTimeout(adjustIframeHeight, 300);
+                });
+            }
             
             // Form handling
             const form = document.getElementById('contact-form');

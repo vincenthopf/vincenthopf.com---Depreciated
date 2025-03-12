@@ -178,21 +178,21 @@
             opacity: 0.8;
         }
 
-        /* Social links styling */
+        /* Social icons styling - square buttons side by side */
         .social-links {
             padding: 0;
             background-color: transparent;
             border: none;
+            margin-top: 1rem;
         }
 
         .social-icons {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 1rem;
             justify-content: center;
             align-items: center;
             margin: 0 auto;
-            max-width: 450px;
             width: 100%;
         }
 
@@ -204,18 +204,18 @@
             color: var(--text-color);
             background-color: var(--surface-color);
             border: 1px solid var(--border-color);
-            padding: 0.75rem 1.25rem;
+            width: 50px;
+            height: 50px;
             border-radius: 8px;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
             overflow: hidden;
-            width: 100%;
             z-index: 2;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .social-icon:hover {
-            transform: translateY(-3px) scale(1.02);
+            transform: translateY(-3px);
             box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
         }
 
@@ -224,14 +224,8 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .social-icon i, .social-icon span {
-            position: relative;
-            z-index: 1;
-        }
-
         .social-icon i {
-            font-size: 1.25rem;
-            margin-right: 0.75rem;
+            font-size: 1.5rem;
             transition: transform 0.3s ease;
         }
 
@@ -240,7 +234,7 @@
         }
 
         .social-icon span {
-            font-weight: 500;
+            display: none; /* Hide text, only show icons */
         }
 
         /* Notion embed section */
@@ -525,32 +519,24 @@
                 <img src="/assets/profile.jpg" alt="Vincent Hopf" class="profile-pic">
                 <h1>Vincent Hopf</h1>
                 <p>Developer & Creator</p>
+                <div class="social-links">
+                    <div class="social-icons">
+                        <a href="https://www.instagram.com/vincenthopf/" class="social-icon" target="_blank" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.skool.com/@vincent" class="social-icon" target="_blank" aria-label="Skool">
+                            <i class="fas fa-graduation-cap"></i>
+                        </a>
+                        <a href="https://github.com/vincenthopf" class="social-icon" target="_blank" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </header>
 
         <main>
-            <section class="social-section">
-                <h2>Connect with me</h2>
-                <div class="social-links">
-                    <div class="social-icons">
-                        <a href="https://www.instagram.com/vincenthopf/" class="social-icon" target="_blank">
-                            <i class="fab fa-instagram"></i>
-                            <span>Instagram</span>
-                        </a>
-                        <a href="https://www.skool.com/@vincent" class="social-icon" target="_blank">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>Skool</span>
-                        </a>
-                        <a href="https://github.com/vincenthopf" class="social-icon" target="_blank">
-                            <i class="fab fa-github"></i>
-                            <span>GitHub</span>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
             <section class="notion-section">
-                <h2>My Posts</h2>
                 <div class="notion-embed">
                     <iframe id="notion-frame" src="https://docs.vincenthopf.com/ebd/1b4aa93cf2f08084aab5f3574a4831a9" style="width:100%; min-height:800px; border:none; border-radius:8px;" scrolling="auto" allowfullscreen></iframe>
                 </div>

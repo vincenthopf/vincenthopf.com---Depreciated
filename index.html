@@ -517,7 +517,7 @@
                     this.ctx = canvas.getContext('2d', { alpha: true });
                     this.particles = [];
                     this.isDarkMode = document.documentElement.classList.contains('dark');
-                    this.particleCount = Math.min(Math.round(window.innerWidth/25), Math.round(window.innerHeight/25));
+                    this.particleCount = Math.min(window.innerWidth, window.innerHeight) * 0.1;
                     this.mousePosition = { x: null, y: null };
                     this.mouseRadius = 120;
                     
@@ -658,7 +658,7 @@
                     this.canvas.style.height = window.innerHeight + 'px';
                     
                     // Adjust particle count for better performance
-                    const newCount = Math.min(Math.round(window.innerWidth/25), Math.round(window.innerHeight/25));
+                    const newCount = Math.min(window.innerWidth, window.innerHeight) * 0.1;
                     
                     if (newCount !== this.particleCount) {
                         this.particleCount = newCount;

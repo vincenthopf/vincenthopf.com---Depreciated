@@ -4,52 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vincent Hopf</title>
-    <!-- Preload critical resources -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.min.css" as="style">
-    <!-- Analytics tracking with defer -->
+    <!-- Analytics tracking -->
     <script defer src="https://analytics.vjh.io/script.js" data-website-id="d60d6d0f-ed54-4ca2-86f6-c0ccfe83d841"></script>
-    <!-- Font Awesome - optimized with subset -->
+    <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Inter font -->
+    <!-- Inter font for clean typography -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.min.css">
     <style>
-        /* Critical CSS inlined for faster first paint */
+        /* Base styles and theme variables */
         :root {
+            /* Light mode colors */
             --bg-color: #ffffff;
             --text-color: #37352f;
             --surface-color: rgba(255, 255, 255, 0.85);
             --border-color: rgba(255, 255, 255, 0.3);
             --input-border-color: #cccccc;
+            --hover-color: rgba(0, 0, 0, 0.05);
             --node-color: rgba(0, 0, 0, 0.4);
             --line-color: rgba(0, 0, 0, 0.15);
             --accent-color: #37352f;
         }
+
+        /* Dark mode colors */
         .dark {
             --bg-color: #191919;
             --text-color: #f9fafb;
             --surface-color: rgba(30, 30, 30, 0.85);
             --border-color: rgba(50, 50, 50, 0.5);
             --input-border-color: rgba(80, 80, 80, 0.8);
+            --hover-color: rgba(255, 255, 255, 0.05);
             --node-color: rgba(255, 255, 255, 0.4);
             --line-color: rgba(255, 255, 255, 0.15);
             --accent-color: #f9fafb;
         }
+
+        /* System preference detection */
         @media (prefers-color-scheme: dark) {
             html:not(.light) {
                 color-scheme: dark;
+            }
+            html:not(.light) body {
                 color: #f9fafb;
+            }
+            html:not(.light) {
                 --bg-color: #191919;
                 --text-color: #f9fafb;
                 --surface-color: rgba(30, 30, 30, 0.85);
                 --border-color: rgba(50, 50, 50, 0.5);
                 --input-border-color: rgba(80, 80, 80, 0.8);
+                --hover-color: rgba(255, 255, 255, 0.05);
                 --node-color: rgba(255, 255, 255, 0.4);
                 --line-color: rgba(255, 255, 255, 0.15);
                 --accent-color: #f9fafb;
             }
         }
-        * {margin: 0; padding: 0; box-sizing: border-box;}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.5;
@@ -60,6 +75,8 @@
             position: relative;
             overflow-x: hidden;
         }
+
+        /* Network animation canvas */
         #network-canvas {
             position: fixed;
             top: 0;
@@ -68,6 +85,7 @@
             height: 100%;
             z-index: -1;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -75,12 +93,15 @@
             position: relative;
             z-index: 1;
         }
+
         header {
             text-align: center;
             padding: 4rem 0 1rem;
             margin-bottom: 1rem;
             position: relative;
         }
+
+        /* Theme toggle button */
         .theme-toggle {
             position: absolute;
             top: 1.5rem;
@@ -98,15 +119,22 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
+
         .theme-toggle:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
+
+        .theme-toggle i {
+            font-size: 1rem;
+        }
+
         .profile {
             margin-bottom: 3rem;
             padding: 1rem;
             border-radius: 8px;
         }
+
         .profile-pic {
             width: 150px;
             height: 150px;
@@ -116,22 +144,48 @@
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+
         .profile h1 {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
             font-weight: 800;
         }
+
         .profile p {
             font-size: 1.25rem;
             opacity: 0.75;
         }
-        /* Social icons styling */
+
+        /* General section styles */
+        section {
+            text-align: center;
+        }
+
+        /* Section spacing */
+        .social-section {
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .social-section h2 {
+            margin-bottom: 0.75rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        /* Social icons styling - square buttons side by side */
         .social-links {
             padding: 0;
             background-color: transparent;
             border: none;
             margin-top: 1rem;
         }
+
         .social-icons {
             display: flex;
             flex-direction: row;
@@ -141,6 +195,7 @@
             margin: 0 auto;
             width: 100%;
         }
+
         .social-icon {
             display: flex;
             align-items: center;
@@ -152,32 +207,52 @@
             width: 50px;
             height: 50px;
             border-radius: 8px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             position: relative;
             overflow: hidden;
             z-index: 2;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .social-icon:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
         }
+
+        .social-icon:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
         .social-icon i {
             font-size: 1.5rem;
             transition: transform 0.3s ease;
         }
+
         .social-icon:hover i {
             transform: scale(1.2);
         }
+
+        .social-icon span {
+            display: none; /* Hide text, only show icons */
+        }
+
         /* Notion embed section */
         .notion-section {
-            margin-top: 1rem;
+            margin-top: 3rem;
             margin-bottom: 3rem;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+        
+        .notion-section h2 {
+            margin-bottom: 0.75rem;
+            width: 100%;
+            text-align: center;
+        }
+        
         .notion-embed {
             width: 100%;
             max-width: 800px;
@@ -190,6 +265,12 @@
             position: relative;
             height: auto;
         }
+        
+        .notion-embed:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
         .notion-embed iframe {
             display: block;
             border-radius: 8px;
@@ -197,7 +278,15 @@
             min-height: 800px;
             border: none;
         }
-        /* Chat button */
+        
+        /* Responsive adjustments for Notion embed */
+        @media (max-width: 850px) {
+            .notion-embed {
+                max-width: 100%;
+            }
+        }
+
+        /* Chat Button and Form Styles */
         .chat-button {
             position: fixed;
             bottom: 1.5rem;
@@ -215,13 +304,16 @@
             z-index: 1000;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .chat-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
         }
+
         .chat-button i {
             font-size: 1.5rem;
         }
+
         .contact-popup {
             position: fixed;
             bottom: 1.5rem;
@@ -240,24 +332,28 @@
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
+
         .contact-popup.active {
             transform: translateY(0);
             opacity: 1;
             pointer-events: auto;
         }
+
         .popup-header {
             padding: 1rem;
             background-color: var(--accent-color);
             color: var(--bg-color);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
         }
+
         .popup-header h3 {
             margin: 0;
             font-size: 1.1rem;
             font-weight: 600;
         }
+
         .close-popup {
             background: none;
             border: none;
@@ -271,12 +367,19 @@
             border-radius: 50%;
             transition: background-color 0.3s ease;
         }
+
+        .close-popup:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
         .popup-body {
             padding: 1.25rem;
         }
+
         .form-group {
             margin-bottom: 1.25rem;
         }
+
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
@@ -284,6 +387,7 @@
             opacity: 0.8;
             font-size: 0.9rem;
         }
+
         .form-group input,
         .form-group textarea {
             width: 100%;
@@ -296,17 +400,20 @@
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             font-size: 0.9rem;
         }
+
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
             border-color: rgba(0, 0, 0, 0.5);
             box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
         }
+
         .dark .form-group input:focus,
         .dark .form-group textarea:focus {
             border-color: rgba(255, 255, 255, 0.5);
             box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
         }
+
         .submit-btn {
             display: flex;
             align-items: center;
@@ -321,18 +428,29 @@
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+
         .submit-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
+
+        .submit-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
         .submit-btn i {
             font-size: 1rem;
             transition: transform 0.3s ease;
         }
+
         .submit-btn:hover i {
             transform: translateX(4px);
         }
+
         .form-status {
             margin-top: 1rem;
             text-align: center;
@@ -340,13 +458,22 @@
             min-height: 24px;
             font-size: 0.9rem;
         }
-        .form-status.success {color: #10b981;}
-        .form-status.error {color: #ef4444;}
+
+        .form-status.success {
+            color: #10b981;
+        }
+
+        .form-status.error {
+            color: #ef4444;
+        }
+
+        /* Dark mode specific overrides */
         .dark .form-group input,
         .dark .form-group textarea {
             background-color: rgba(30, 30, 30, 0.8);
             border-color: var(--input-border-color);
         }
+
         footer {
             text-align: center;
             padding: 2rem 0;
@@ -357,9 +484,18 @@
             position: relative;
             z-index: 1;
         }
+
+        /* Mobile adjustments */
         @media (max-width: 768px) {
-            .profile h1 {font-size: 2rem;}
-            .theme-toggle {top: 1rem; right: 1rem;}
+            .profile h1 {
+                font-size: 2rem;
+            }
+            
+            .theme-toggle {
+                top: 1rem;
+                right: 1rem;
+            }
+            
             .contact-popup {
                 width: 100%;
                 max-width: 100%;
@@ -367,11 +503,11 @@
                 right: 0;
                 border-radius: 12px 12px 0 0;
             }
-            .notion-embed {max-width: 100%;}
         }
     </style>
 </head>
 <body>
+    <!-- Network Canvas Background -->
     <canvas id="network-canvas"></canvas>
     <div class="container">
         <header>
@@ -380,18 +516,18 @@
                 <span>Toggle Theme</span>
             </div>
             <div class="profile">
-                <img src="/assets/profile.jpg" alt="Vincent Hopf" class="profile-pic" width="150" height="150">
+                <img src="/assets/profile.jpg" alt="Vincent Hopf" class="profile-pic">
                 <h1>Vincent Hopf</h1>
                 <p>Developer & Creator</p>
                 <div class="social-links">
                     <div class="social-icons">
-                        <a href="https://www.instagram.com/vincenthopf/" class="social-icon" target="_blank" rel="noopener" aria-label="Instagram">
+                        <a href="https://www.instagram.com/vincenthopf/" class="social-icon" target="_blank" aria-label="Instagram">
                             <i class="fab fa-instagram"></i>
                         </a>
-                        <a href="https://www.skool.com/@vincent" class="social-icon" target="_blank" rel="noopener" aria-label="Skool">
+                        <a href="https://www.skool.com/@vincent" class="social-icon" target="_blank" aria-label="Skool">
                             <i class="fas fa-graduation-cap"></i>
                         </a>
-                        <a href="https://github.com/vincenthopf" class="social-icon" target="_blank" rel="noopener" aria-label="GitHub">
+                        <a href="https://github.com/vincenthopf" class="social-icon" target="_blank" aria-label="GitHub">
                             <i class="fab fa-github"></i>
                         </a>
                     </div>
@@ -402,7 +538,7 @@
         <main>
             <section class="notion-section">
                 <div class="notion-embed">
-                    <iframe id="notion-frame" src="https://docs.vincenthopf.com/ebd/1b4aa93cf2f08084aab5f3574a4831a9" style="width:100%; min-height:800px; border:none; border-radius:8px;" loading="lazy" scrolling="auto" allowfullscreen title="Vincent's Notion Page"></iframe>
+                    <iframe id="notion-frame" src="https://docs.vincenthopf.com/ebd/1b4aa93cf2f08084aab5f3574a4831a9" style="width:100%; min-height:800px; border:none; border-radius:8px;" scrolling="auto" allowfullscreen></iframe>
                 </div>
             </section>
         </main>
@@ -413,14 +549,16 @@
         </footer>
     </div>
 
+    <!-- Chat button -->
     <div class="chat-button" id="chat-button">
         <i class="fas fa-comment"></i>
     </div>
 
+    <!-- Contact Form Popup -->
     <div class="contact-popup" id="contact-popup">
         <div class="popup-header">
             <h3>Get in Touch</h3>
-            <button class="close-popup" id="close-popup" aria-label="Close">
+            <button class="close-popup" id="close-popup">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -448,66 +586,273 @@
     </div>
 
     <script>
-        // Use requestAnimationFrame for smoother animations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Current year
-            document.getElementById('current-year').textContent = new Date().getFullYear();
-            
-            // Theme handling
-            const themeToggle = document.getElementById('theme-toggle');
-            const themeIcon = themeToggle.querySelector('i');
-            const themeText = themeToggle.querySelector('span');
-            
-            // Initialize dark mode
+        // Initialize current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Theme handling functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const themeText = themeToggle.querySelector('span');
+        
+        // Check for system preference for dark mode
+        function initDarkMode() {
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.documentElement.classList.add('dark');
+                updateThemeToggle('dark');
+            } else {
+                updateThemeToggle('light');
+            }
+        }
+        
+        // Theme toggle event listener
+        themeToggle.addEventListener('click', toggleDarkMode);
+        
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            document.documentElement.classList.toggle('light');
+            
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            updateThemeToggle(isDarkMode ? 'dark' : 'light');
+            
+            // Update network animation colors
+            if (window.networkAnimation) {
+                window.networkAnimation.updateColors(isDarkMode);
+            }
+        }
+        
+        function updateThemeToggle(theme) {
+            if (theme === 'dark') {
                 themeIcon.className = 'fas fa-sun';
                 themeText.textContent = 'Light Mode';
+            } else {
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Dark Mode';
+            }
+        }
+        
+        // Chat popup functionality
+        const chatButton = document.getElementById('chat-button');
+        const contactPopup = document.getElementById('contact-popup');
+        const closePopup = document.getElementById('close-popup');
+        
+        chatButton.addEventListener('click', () => {
+            contactPopup.classList.add('active');
+            chatButton.style.display = 'none';
+        });
+        
+        closePopup.addEventListener('click', () => {
+            contactPopup.classList.remove('active');
+            setTimeout(() => {
+                chatButton.style.display = 'flex';
+            }, 300);
+        });
+        
+        // Network background animation
+        class NetworkAnimation {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.isDarkMode = document.documentElement.classList.contains('dark');
+                this.particleCount = Math.min(window.innerWidth, window.innerHeight) * 0.1;
+                this.mousePosition = { x: null, y: null };
+                this.mouseRadius = 120;
+                
+                this.init();
+                this.animate();
+                
+                // Add event listeners
+                window.addEventListener('resize', () => this.handleResize());
+                document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                document.addEventListener('mouseleave', () => this.handleMouseLeave());
+                document.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: true });
+                document.addEventListener('touchend', () => this.handleMouseLeave());
             }
             
-            // Toggle theme with debounce
-            let themeTimeout;
-            themeToggle.addEventListener('click', function() {
-                clearTimeout(themeTimeout);
-                themeTimeout = setTimeout(function() {
-                    document.documentElement.classList.toggle('dark');
-                    document.documentElement.classList.toggle('light');
+            init() {
+                this.handleResize();
+                
+                // Create particles
+                this.particles = [];
+                for (let i = 0; i < this.particleCount; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        size: Math.random() * 1.5 + 1,
+                        speedX: (Math.random() - 0.5) * 1,
+                        speedY: (Math.random() - 0.5) * 1,
+                        connections: []
+                    });
+                }
+            }
+            
+            updateColors(isDarkMode) {
+                this.isDarkMode = isDarkMode;
+            }
+            
+            drawParticles() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Update and draw particles
+                for (let i = 0; i < this.particles.length; i++) {
+                    let p = this.particles[i];
                     
-                    if (document.documentElement.classList.contains('dark')) {
-                        themeIcon.className = 'fas fa-sun';
-                        themeText.textContent = 'Light Mode';
-                    } else {
-                        themeIcon.className = 'fas fa-moon';
-                        themeText.textContent = 'Dark Mode';
+                    // Move particle
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    
+                    // Boundary check
+                    if (p.x < 0 || p.x > this.canvas.width) p.speedX *= -1;
+                    if (p.y < 0 || p.y > this.canvas.height) p.speedY *= -1;
+                    
+                    // Mouse repulsion
+                    if (this.mousePosition.x !== null) {
+                        const dx = p.x - this.mousePosition.x;
+                        const dy = p.y - this.mousePosition.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < this.mouseRadius) {
+                            const angle = Math.atan2(dy, dx);
+                            const force = (this.mouseRadius - distance) / this.mouseRadius;
+                            p.x += Math.cos(angle) * force * 4;
+                            p.y += Math.sin(angle) * force * 4;
+                        }
                     }
                     
-                    // Update network colors
-                    if (window.networkAnimation) {
-                        window.networkAnimation.updateColors(document.documentElement.classList.contains('dark'));
+                    // Draw the particle
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    this.ctx.fillStyle = this.isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)';
+                    this.ctx.fill();
+                    
+                    // Clear connections array
+                    p.connections = [];
+                }
+                
+                // Draw connections
+                this.ctx.beginPath();
+                for (let i = 0; i < this.particles.length; i++) {
+                    for (let j = i + 1; j < this.particles.length; j++) {
+                        const p1 = this.particles[i];
+                        const p2 = this.particles[j];
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < Math.max(window.innerWidth, window.innerHeight) * 0.12) {
+                            // Add connection for both particles
+                            p1.connections.push(j);
+                            p2.connections.push(i);
+                            
+                            // Draw line
+                            this.ctx.moveTo(p1.x, p1.y);
+                            this.ctx.lineTo(p2.x, p2.y);
+                        }
                     }
-                }, 100);
-            });
+                }
+                
+                // Style and draw all lines at once for better performance
+                this.ctx.strokeStyle = this.isDarkMode ? 
+                    `rgba(255, 255, 255, ${Math.min(0.15, (100 / this.particleCount) * 0.3)})` : 
+                    `rgba(0, 0, 0, ${Math.min(0.15, (100 / this.particleCount) * 0.3)})`;
+                this.ctx.lineWidth = 0.5;
+                this.ctx.stroke();
+            }
             
-            // Chat popup
-            const chatButton = document.getElementById('chat-button');
-            const contactPopup = document.getElementById('contact-popup');
-            const closePopup = document.getElementById('close-popup');
+            animate() {
+                this.drawParticles();
+                requestAnimationFrame(() => this.animate());
+            }
             
-            // Open popup
-            chatButton.addEventListener('click', function() {
-                contactPopup.classList.add('active');
-                chatButton.style.display = 'none';
-            });
+            handleResize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                
+                // Update particle count on resize
+                const newCount = Math.min(window.innerWidth, window.innerHeight) * 0.1;
+                
+                // Add particles if needed
+                if (newCount > this.particleCount) {
+                    const addCount = newCount - this.particleCount;
+                    for (let i = 0; i < addCount; i++) {
+                        this.particles.push({
+                            x: Math.random() * this.canvas.width,
+                            y: Math.random() * this.canvas.height,
+                            size: Math.random() * 1.5 + 1,
+                            speedX: (Math.random() - 0.5) * 1,
+                            speedY: (Math.random() - 0.5) * 1,
+                            connections: []
+                        });
+                    }
+                } else if (newCount < this.particleCount) {
+                    // Remove particles if needed
+                    this.particles = this.particles.slice(0, newCount);
+                }
+                
+                this.particleCount = newCount;
+            }
             
-            // Close popup
-            closePopup.addEventListener('click', function() {
-                contactPopup.classList.remove('active');
-                setTimeout(function() {
-                    chatButton.style.display = 'flex';
-                }, 300);
-            });
+            handleMouseMove(e) {
+                this.mousePosition.x = e.clientX;
+                this.mousePosition.y = e.clientY;
+            }
             
-            // Form submission
+            handleTouchMove(e) {
+                if (e.touches.length > 0) {
+                    this.mousePosition.x = e.touches[0].clientX;
+                    this.mousePosition.y = e.touches[0].clientY;
+                }
+            }
+            
+            handleMouseLeave() {
+                this.mousePosition.x = null;
+                this.mousePosition.y = null;
+            }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize theme
+            initDarkMode();
+            
+            // Initialize network animation
+            const canvas = document.getElementById('network-canvas');
+            window.networkAnimation = new NetworkAnimation(canvas);
+            
+            // Try to make the Notion iframe height dynamic
+            const notionFrame = document.getElementById('notion-frame');
+            if (notionFrame) {
+                // Initial height is set via CSS min-height
+                
+                // Try to adjust after load (may not work due to cross-origin)
+                notionFrame.onload = function() {
+                    try {
+                        // This may not work due to cross-origin restrictions
+                        const frameHeight = notionFrame.contentWindow.document.body.scrollHeight;
+                        if (frameHeight > 800) {
+                            notionFrame.style.height = frameHeight + 'px';
+                        }
+                    } catch(e) {
+                        console.log("Cannot access iframe content due to cross-origin policy");
+                        // Use a reasonable default height
+                        notionFrame.style.height = '1200px';
+                    }
+                };
+                
+                // Try to adjust on window resize
+                window.addEventListener('resize', function() {
+                    try {
+                        const frameHeight = notionFrame.contentWindow.document.body.scrollHeight;
+                        if (frameHeight > 800) {
+                            notionFrame.style.height = frameHeight + 'px';
+                        }
+                    } catch(e) {
+                        // Silently fail on cross-origin issues
+                    }
+                });
+            }
+            
+            // Form handling
             const form = document.getElementById('contact-form');
             const formStatus = document.getElementById('form-status');
             
@@ -524,32 +869,41 @@
                     submitBtn.disabled = true;
                     
                     try {
+                        // Get form action from the form's action attribute
+                        const formAction = form.getAttribute('action');
+                        
+                        // Prepare form data
+                        const formData = new FormData(form);
+                        
                         // Send form data
-                        const response = await fetch(form.action, {
+                        const response = await fetch(formAction, {
                             method: 'POST',
-                            body: new FormData(form),
+                            body: formData,
                             headers: {
                                 'Accept': 'application/json'
                             }
                         });
                         
+                        // Handle response
                         if (response.ok) {
                             // Success
                             form.reset();
                             formStatus.textContent = 'Message sent successfully!';
                             formStatus.className = 'form-status success';
                             
-                            // Close popup after success
-                            setTimeout(function() {
+                            // Close popup after successful submission with a delay
+                            setTimeout(() => {
                                 contactPopup.classList.remove('active');
-                                setTimeout(function() {
+                                setTimeout(() => {
                                     chatButton.style.display = 'flex';
-                                    setTimeout(function() {
+                                    // Reset form status after popup is closed
+                                    setTimeout(() => {
                                         formStatus.textContent = '';
                                         formStatus.className = 'form-status';
                                     }, 1000);
                                 }, 300);
                             }, 2000);
+                            
                         } else {
                             // Error
                             const data = await response.json();
@@ -565,177 +919,7 @@
                     }
                 });
             }
-            
-            // Initialize network animation with requestAnimationFrame for better performance
-            class NetworkAnimation {
-                constructor(canvas) {
-                    this.canvas = canvas;
-                    this.ctx = canvas.getContext('2d', { alpha: true });
-                    this.particles = [];
-                    this.isDarkMode = document.documentElement.classList.contains('dark');
-                    this.particleCount = Math.min(Math.round(window.innerWidth/25), Math.round(window.innerHeight/25));
-                    this.mousePosition = { x: null, y: null };
-                    this.mouseRadius = 120;
-                    
-                    this.handleResize();
-                    this.init();
-                    this.animate();
-                    
-                    // Throttled event listeners for better performance
-                    window.addEventListener('resize', this.throttle(this.handleResize.bind(this), 200));
-                    document.addEventListener('mousemove', this.throttle(this.handleMouseMove.bind(this), 20));
-                    document.addEventListener('mouseleave', this.handleMouseLeave.bind(this));
-                    document.addEventListener('touchmove', this.throttle(this.handleTouchMove.bind(this), 20), { passive: true });
-                    document.addEventListener('touchend', this.handleMouseLeave.bind(this));
-                }
-                
-                throttle(func, limit) {
-                    let inThrottle;
-                    return function() {
-                        const args = arguments;
-                        const context = this;
-                        if (!inThrottle) {
-                            func.apply(context, args);
-                            inThrottle = true;
-                            setTimeout(() => inThrottle = false, limit);
-                        }
-                    };
-                }
-                
-                init() {
-                    // Create particles
-                    this.particles = [];
-                    for (let i = 0; i < this.particleCount; i++) {
-                        this.particles.push({
-                            x: Math.random() * this.canvas.width,
-                            y: Math.random() * this.canvas.height,
-                            size: Math.random() * 1.5 + 1,
-                            speedX: (Math.random() - 0.5) * 0.7,
-                            speedY: (Math.random() - 0.5) * 0.7,
-                            connections: []
-                        });
-                    }
-                }
-                
-                updateColors(isDarkMode) {
-                    this.isDarkMode = isDarkMode;
-                }
-                
-                drawParticles() {
-                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                    
-                    // Update and draw particles
-                    for (let i = 0; i < this.particles.length; i++) {
-                        let p = this.particles[i];
-                        
-                        // Move particle
-                        p.x += p.speedX;
-                        p.y += p.speedY;
-                        
-                        // Boundary check
-                        if (p.x < 0 || p.x > this.canvas.width) p.speedX *= -1;
-                        if (p.y < 0 || p.y > this.canvas.height) p.speedY *= -1;
-                        
-                        // Mouse repulsion
-                        if (this.mousePosition.x !== null) {
-                            const dx = p.x - this.mousePosition.x;
-                            const dy = p.y - this.mousePosition.y;
-                            const distance = Math.sqrt(dx * dx + dy * dy);
-                            
-                            if (distance < this.mouseRadius) {
-                                const angle = Math.atan2(dy, dx);
-                                const force = (this.mouseRadius - distance) / this.mouseRadius;
-                                p.x += Math.cos(angle) * force * 4;
-                                p.y += Math.sin(angle) * force * 4;
-                            }
-                        }
-                        
-                        // Draw the particle
-                        this.ctx.beginPath();
-                        this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                        this.ctx.fillStyle = this.isDarkMode ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)';
-                        this.ctx.fill();
-                        
-                        // Clear connections array
-                        p.connections = [];
-                    }
-                    
-                    // Draw connections - optimized to check fewer pairs
-                    this.ctx.beginPath();
-                    const maxDistance = Math.max(window.innerWidth, window.innerHeight) * 0.1;
-                    
-                    for (let i = 0; i < this.particles.length; i++) {
-                        // Only check nearby particles for better performance
-                        for (let j = i + 1; j < this.particles.length; j++) {
-                            const p1 = this.particles[i];
-                            const p2 = this.particles[j];
-                            const dx = p1.x - p2.x;
-                            const dy = p1.y - p2.y;
-                            
-                            // Quick distance check to avoid square root calculation
-                            if (Math.abs(dx) < maxDistance && Math.abs(dy) < maxDistance) {
-                                const distance = Math.sqrt(dx * dx + dy * dy);
-                                
-                                if (distance < maxDistance) {
-                                    // Add connection for both particles
-                                    p1.connections.push(j);
-                                    p2.connections.push(i);
-                                    
-                                    // Draw line
-                                    this.ctx.moveTo(p1.x, p1.y);
-                                    this.ctx.lineTo(p2.x, p2.y);
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Style and draw all lines at once for better performance
-                    this.ctx.strokeStyle = this.isDarkMode ? 
-                        `rgba(255, 255, 255, ${Math.min(0.15, (100 / this.particleCount) * 0.3)})` : 
-                        `rgba(0, 0, 0, ${Math.min(0.15, (100 / this.particleCount) * 0.3)})`;
-                    this.ctx.lineWidth = 0.5;
-                    this.ctx.stroke();
-                }
-                
-                animate() {
-                    this.drawParticles();
-                    requestAnimationFrame(() => this.animate());
-                }
-                
-                handleResize() {
-                    // Optimize resize logic
-                    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-                    this.canvas.width = window.innerWidth * pixelRatio;
-                    this.canvas.height = window.innerHeight * pixelRatio;
-                    this.ctx.scale(pixelRatio, pixelRatio);
-                    
-                    // Update style dimensions
-                    this.canvas.style.width = window.innerWidth + 'px';
-                    this.canvas.style.height = window.innerHeight + 'px';
-                    
-                    // Adjust particle count for better performance
-                    const newCount = Math.min(Math.round(window.innerWidth/25), Math.round(window.innerHeight/25));
-                    
-                    if (newCount !== this.particleCount) {
-                        this.particleCount = newCount;
-                        this.init(); // Recreate particles
-                    }
-                }
-                
-                handleMouseMove(e) {
-                    this.mousePosition.x = e.clientX;
-                    this.mousePosition.y = e.clientY;
-                }
-                
-                handleTouchMove(e) {
-                    if (e.touches.length > 0) {
-                        this.mousePosition.x = e.touches[0].clientX;
-                        this.mousePosition.y = e.touches[0].clientY;
-                    }
-                }
-                
-                handleMouseLeave() {
-                    this.mousePosition.x = null;
-                    this.mousePosition.y = null;
-                }
-            }
+        });
+    </script>
+</body>
+</html>

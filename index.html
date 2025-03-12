@@ -1,51 +1,4 @@
-/* Notion embed section */
-        .notion-section {
-            margin-top: 3rem;
-            margin-bottom: 3rem;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .notion-section h2 {
-            margin-bottom: 0.75rem;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .notion-embed {
-            width: 100%;
-            max-width: 800px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            height: auto;
-        }
-        
-        .notion-embed:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-        
-        .notion-embed iframe {
-            display: block;
-            border-radius: 8px;
-            width: 100%;
-            min-height: 800px;
-            border: none;
-        }
-        
-        /* Responsive adjustments for Notion embed */
-        @media (max-width: 850px) {
-            .notion-embed {
-                max-width: 100%;
-            }
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -288,6 +241,55 @@
 
         .social-icon span {
             font-weight: 500;
+        }
+
+        /* Notion embed section */
+        .notion-section {
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .notion-section h2 {
+            margin-bottom: 0.75rem;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .notion-embed {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            height: auto;
+        }
+        
+        .notion-embed:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .notion-embed iframe {
+            display: block;
+            border-radius: 8px;
+            width: 100%;
+            min-height: 800px;
+            border: none;
+        }
+        
+        /* Responsive adjustments for Notion embed */
+        @media (max-width: 850px) {
+            .notion-embed {
+                max-width: 100%;
+            }
         }
 
         /* Chat Button and Form Styles */
@@ -831,17 +833,13 @@
             const canvas = document.getElementById('network-canvas');
             window.networkAnimation = new NetworkAnimation(canvas);
             
-            // Attempt to adjust iframe height dynamically
+            // Try to make the Notion iframe height dynamic
             const notionFrame = document.getElementById('notion-frame');
             if (notionFrame) {
-                // Set initial height
-                notionFrame.onload = function() {
-                    // Try to adjust height after iframe loads
-                    setTimeout(adjustIframeHeight, 1000);
-                };
+                // Initial height is set via CSS min-height
                 
-                // Function to adjust iframe height
-                function adjustIframeHeight() {
+                // Try to adjust after load (may not work due to cross-origin)
+                notionFrame.onload = function() {
                     try {
                         // This may not work due to cross-origin restrictions
                         const frameHeight = notionFrame.contentWindow.document.body.scrollHeight;
@@ -850,14 +848,21 @@
                         }
                     } catch(e) {
                         console.log("Cannot access iframe content due to cross-origin policy");
-                        // Fallback: Use a reasonable height
+                        // Use a reasonable default height
                         notionFrame.style.height = '1200px';
                     }
-                }
+                };
                 
-                // Also adjust on window resize
+                // Try to adjust on window resize
                 window.addEventListener('resize', function() {
-                    setTimeout(adjustIframeHeight, 300);
+                    try {
+                        const frameHeight = notionFrame.contentWindow.document.body.scrollHeight;
+                        if (frameHeight > 800) {
+                            notionFrame.style.height = frameHeight + 'px';
+                        }
+                    } catch(e) {
+                        // Silently fail on cross-origin issues
+                    }
                 });
             }
             

@@ -517,9 +517,10 @@
                     this.ctx = canvas.getContext('2d', { alpha: true });
                     this.particles = [];
                     this.isDarkMode = document.documentElement.classList.contains('dark');
-                    this.particleCount = Math.min(window.innerWidth, window.innerHeight) * 0.1;
+                    // Increased particle count for more nodes
+                    this.particleCount = Math.min(window.innerWidth, window.innerHeight) * 0.25;
                     this.mousePosition = { x: null, y: null };
-                    this.mouseRadius = 120;
+                    this.mouseRadius = 150;
                     
                     this.handleResize();
                     this.init();
@@ -580,17 +581,27 @@
                         if (p.x < 0 || p.x > this.canvas.width) p.speedX *= -1;
                         if (p.y < 0 || p.y > this.canvas.height) p.speedY *= -1;
                         
-                        // Mouse repulsion
+                        // Mouse interaction - connect to mouse instead of repelling
                         if (this.mousePosition.x !== null) {
                             const dx = p.x - this.mousePosition.x;
                             const dy = p.y - this.mousePosition.y;
                             const distance = Math.sqrt(dx * dx + dy * dy);
                             
                             if (distance < this.mouseRadius) {
+                                // Draw connection to mouse
+                                this.ctx.beginPath();
+                                this.ctx.moveTo(p.x, p.y);
+                                this.ctx.lineTo(this.mousePosition.x, this.mousePosition.y);
+                                this.ctx.strokeStyle = this.isDarkMode ? 
+                                    `rgba(255, 255, 255, ${0.2 * (1 - distance / this.mouseRadius)})` : 
+                                    `rgba(0, 0, 0, ${0.2 * (1 - distance / this.mouseRadius)})`;
+                                this.ctx.stroke();
+                                
+                                // Subtle attraction to mouse
                                 const angle = Math.atan2(dy, dx);
-                                const force = (this.mouseRadius - distance) / this.mouseRadius;
-                                p.x += Math.cos(angle) * force * 4;
-                                p.y += Math.sin(angle) * force * 4;
+                                const force = 0.3 * (1 - distance / this.mouseRadius);
+                                p.x -= Math.cos(angle) * force;
+                                p.y -= Math.sin(angle) * force;
                             }
                         }
                         
@@ -604,9 +615,17 @@
                         p.connections = [];
                     }
                     
+                    // Draw mouse cursor node if mouse is on canvas
+                    if (this.mousePosition.x !== null) {
+                        this.ctx.beginPath();
+                        this.ctx.arc(this.mousePosition.x, this.mousePosition.y, 3, 0, Math.PI * 2);
+                        this.ctx.fillStyle = this.isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)';
+                        this.ctx.fill();
+                    }
+                    
                     // Draw connections - optimized to check fewer pairs
                     this.ctx.beginPath();
-                    const maxDistance = Math.max(window.innerWidth, window.innerHeight) * 0.1;
+                    const maxDistance = Math.max(window.innerWidth, window.innerHeight) * 0.12;
                     
                     for (let i = 0; i < this.particles.length; i++) {
                         // Only check nearby particles for better performance
@@ -657,8 +676,8 @@
                     this.canvas.style.width = window.innerWidth + 'px';
                     this.canvas.style.height = window.innerHeight + 'px';
                     
-                    // Adjust particle count for better performance
-                    const newCount = Math.min(window.innerWidth, window.innerHeight) * 0.1;
+                    // Adjust particle count for better performance - increased for more nodes
+                    const newCount = Math.min(window.innerWidth, window.innerHeight) * 0.25;
                     
                     if (newCount !== this.particleCount) {
                         this.particleCount = newCount;

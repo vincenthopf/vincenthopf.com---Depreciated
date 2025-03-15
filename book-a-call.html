@@ -169,8 +169,8 @@
         
         /* Meeting info card styling - centered, no background */
         .meeting-info-card {
-            padding: 1rem 1.5rem 1.5rem;
-            margin-bottom: 2rem;
+            padding: 2rem 1.5rem;
+            margin-bottom: 2.5rem;
             text-align: center;
         }
         
@@ -1049,7 +1049,9 @@
                 }
             }
 
-          
+            // No need to initialize custom calendar functionality as we're using Cal.com
+            // But we still need to initialize the network animation
+            // This is handled above in the NetworkAnimation class instantiation
         });
     </script>
 </body>

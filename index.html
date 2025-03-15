@@ -148,6 +148,33 @@
         .social-icon:hover i {
             transform: scale(1.2);
         }
+        /* Book a Call button styling */
+        .book-call-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .book-call-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
+        }
+        .book-call-btn i {
+            font-size: 1.1rem;
+        }
         /* Notion embed section */
         .notion-section {
             margin-top: 1rem;
@@ -369,6 +396,10 @@
                             <i class="fab fa-github"></i>
                         </a>
                     </div>
+                    <a href="https://vincenthopf.com/book-a-call.html" class="book-call-btn" target="_blank" rel="noopener">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Book a Call</span>
+                    </a>
                 </div>
             </div>
         </header>

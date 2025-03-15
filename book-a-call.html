@@ -162,9 +162,26 @@
             background-color: var(--bg-color);
         }
         
-        /* Force Cal.com to use dark theme */
+        /* Force Cal.com to use dark theme and hide branding */
         iframe {
             color-scheme: dark;
+        }
+        
+        /* Hide Cal.com branding */
+        .cal-embed-wrapper iframe {
+            position: relative;
+        }
+        
+        /* This CSS will be injected to handle the Cal.com branding */
+        .cal-embed-wrapper::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background-color: #191919;
+            z-index: 100;
         }
         
         /* Meeting info card styling - centered, no background */
@@ -464,10 +481,42 @@
                         Cal("init", "30", {origin:"https://cal.com"});
                           Cal.ns["30"]("inline", {
                             elementOrSelector:"#my-cal-inline",
-                            config: {"layout":"month_view", "theme":"dark"},
+                            config: {"layout":"month_view", "theme":"dark", "hideEventTypeDetails":true, "hideBranding":true},
                             calLink: "vhopf/30",
                           });
-                          Cal.ns["30"]("ui", {"hideEventTypeDetails":true,"layout":"month_view", "theme":"dark"});
+                          Cal.ns["30"]("ui", {"hideEventTypeDetails":true, "layout":"month_view", "theme":"dark", "hideBranding":true});
+                        </script>
+                        <!-- Script to remove Cal.com branding -->
+                        <script>
+                          // Function to remove Cal.com branding
+                          function removeCalBranding() {
+                            const iframe = document.querySelector('#my-cal-inline iframe');
+                            if (iframe && iframe.contentDocument) {
+                              const brandingElements = iframe.contentDocument.querySelectorAll('[data-testid="powered-by"]');
+                              brandingElements.forEach(el => {
+                                el.style.display = 'none';
+                              });
+                            }
+                          }
+                          
+                          // Check periodically until the iframe is loaded
+                          const checkInterval = setInterval(() => {
+                            const iframe = document.querySelector('#my-cal-inline iframe');
+                            if (iframe) {
+                              iframe.onload = function() {
+                                removeCalBranding();
+                                // Also set up a mutation observer to handle dynamic content
+                                if (iframe.contentDocument) {
+                                  const observer = new MutationObserver(removeCalBranding);
+                                  observer.observe(iframe.contentDocument.body, { 
+                                    childList: true, 
+                                    subtree: true 
+                                  });
+                                }
+                              };
+                              clearInterval(checkInterval);
+                            }
+                          }, 300);
                         </script>
                         <!-- Cal inline embed code ends -->
                     </div>

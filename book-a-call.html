@@ -14,21 +14,6 @@
     <style>
         /* Critical CSS inlined for faster first paint */
         :root {
-            --bg-color: #ffffff;
-            --text-color: #37352f;
-            --surface-color: rgba(255, 255, 255, 0.85);
-            --border-color: rgba(255, 255, 255, 0.3);
-            --input-border-color: #cccccc;
-            --node-color: rgba(0, 0, 0, 0.4);
-            --line-color: rgba(0, 0, 0, 0.15);
-            --accent-color: #37352f;
-            --highlight-color: rgba(55, 53, 47, 0.08);
-            --selected-color: rgba(55, 53, 47, 0.16);
-            --unavailable-color: rgba(220, 220, 220, 0.5);
-            --available-color: rgba(16, 185, 129, 0.1);
-            --available-border: rgba(16, 185, 129, 0.5);
-        }
-        .dark {
             --bg-color: #191919;
             --text-color: #f9fafb;
             --surface-color: rgba(30, 30, 30, 0.85);
@@ -42,6 +27,23 @@
             --unavailable-color: rgba(50, 50, 50, 0.5);
             --available-color: rgba(16, 185, 129, 0.2);
             --available-border: rgba(16, 185, 129, 0.6);
+            --calendar-icon-bg: #10b981;
+        }
+        .light {
+            --bg-color: #ffffff;
+            --text-color: #37352f;
+            --surface-color: rgba(255, 255, 255, 0.85);
+            --border-color: rgba(255, 255, 255, 0.3);
+            --input-border-color: #cccccc;
+            --node-color: rgba(0, 0, 0, 0.4);
+            --line-color: rgba(0, 0, 0, 0.15);
+            --accent-color: #37352f;
+            --highlight-color: rgba(55, 53, 47, 0.08);
+            --selected-color: rgba(55, 53, 47, 0.16);
+            --unavailable-color: rgba(220, 220, 220, 0.5);
+            --available-color: rgba(16, 185, 129, 0.1);
+            --available-border: rgba(16, 185, 129, 0.5);
+            --calendar-icon-bg: #10b981;
         }
         @media (prefers-color-scheme: dark) {
             html:not(.light) {
@@ -72,6 +74,8 @@
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
+            /* Force dark mode */
+            color-scheme: dark;
         }
         #network-canvas {
             position: fixed;
@@ -141,45 +145,28 @@
         }
         
         .cal-container {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
             border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            padding: 0 1rem 1rem;
             overflow: hidden;
-        }
-        
-        .cal-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .calendar-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .calendar-subtitle {
-            font-size: 1rem;
-            opacity: 0.7;
         }
         
         .cal-embed-wrapper {
             width: 100%;
-            margin-bottom: 2rem;
             border-radius: 8px;
             overflow: hidden;
             background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
+        }
+        
+        /* Force Cal.com to use dark theme */
+        iframe {
+            color-scheme: dark;
         }
         
         /* Meeting info card styling - centered, no background */
         .meeting-info-card {
             padding: 1rem 1.5rem 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             text-align: center;
         }
         
@@ -188,6 +175,37 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+        }
+        
+        .meeting-icon {
+            background-color: var(--calendar-icon-bg);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .meeting-icon i {
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .meeting-details h3 {
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .meeting-details p {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 0;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .meeting-icon {
@@ -436,16 +454,16 @@
                     <!-- Cal.com embed container -->
                     <div class="cal-embed-wrapper">
                         <!-- Cal inline embed code begins -->
-                        <div style="width:100%;height:700px;overflow:scroll" id="my-cal-inline"></div>
+                        <div style="width:100%;height:600px;overflow:scroll" id="my-cal-inline"></div>
                         <script type="text/javascript">
                           (function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
                         Cal("init", "30", {origin:"https://cal.com"});
                           Cal.ns["30"]("inline", {
                             elementOrSelector:"#my-cal-inline",
-                            config: {"layout":"month_view"},
+                            config: {"layout":"month_view", "theme":"dark"},
                             calLink: "vhopf/30",
                           });
-                          Cal.ns["30"]("ui", {"hideEventTypeDetails":true,"layout":"month_view"});
+                          Cal.ns["30"]("ui", {"hideEventTypeDetails":true,"layout":"month_view", "theme":"dark"});
                         </script>
                         <!-- Cal inline embed code ends -->
                     </div>
@@ -461,13 +479,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Force dark mode
+            document.documentElement.classList.add('dark');
+            
             // Current year
             document.getElementById('current-year').textContent = new Date().getFullYear();
-            
-            // Auto-detect dark mode from system preferences
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-            }
             
             // Initialize network animation with requestAnimationFrame for better performance
             class NetworkAnimation {

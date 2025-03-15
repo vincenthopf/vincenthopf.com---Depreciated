@@ -145,10 +145,14 @@
         }
         
         .cal-container {
-            background-color: var(--bg-color);
+            background-color: rgba(25, 25, 25, 0.95);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 0 1rem 1rem;
             overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
         
         .cal-embed-wrapper {
@@ -428,7 +432,7 @@
                 <img src="/assets/profile.jpg" alt="Vincent Hopf" class="profile-pic" width="100" height="100">
                 <h1>Vincent Hopf</h1>
                 <p>Developer & Creator</p>
-                <a href="index.html" class="back-link">
+                <a href="https://vincenthopf.com" class="back-link">
                     <i class="fas fa-arrow-left"></i> Back to home
                 </a>
             </div>
@@ -1045,9 +1049,7 @@
                 }
             }
 
-            // No need to initialize custom calendar functionality as we're using Cal.com
-            // But we still need to initialize the network animation
-            // This is handled above in the NetworkAnimation class instantiation
+          
         });
     </script>
 </body>

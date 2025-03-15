@@ -148,33 +148,39 @@
         .social-icon:hover i {
             transform: scale(1.2);
         }
-        /* Book a Call button styling */
-        .book-call-btn {
+        /* Book a Call social button styling */
+        .book-call-social-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-            padding: 0.75rem 1.5rem;
-            background-color: var(--accent-color);
-            color: var(--bg-color);
+            gap: 0.5rem;
             text-decoration: none;
+            color: var(--text-color);
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            height: 50px;
+            padding: 0 1.25rem;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
+            font-weight: 600;
+            font-size: 0.875rem;
         }
-        .book-call-btn:hover {
+        .book-call-social-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 14px rgba(0, 0, 0, 0.15);
         }
-        .book-call-btn i {
-            font-size: 1.1rem;
+        .book-call-social-btn i {
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
         }
+        .book-call-social-btn:hover i {
+            transform: scale(1.2);
+        }
+
         /* Notion embed section */
         .notion-section {
             margin-top: 1rem;
@@ -395,11 +401,11 @@
                         <a href="https://github.com/vincenthopf" class="social-icon" target="_blank" rel="noopener" aria-label="GitHub">
                             <i class="fab fa-github"></i>
                         </a>
+                        <a href="https://vincenthopf.com/book-a-call.html" class="book-call-social-btn" target="_blank" rel="noopener" aria-label="Book a Call">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Book a Call</span>
+                        </a>
                     </div>
-                    <a href="https://vincenthopf.com/book-a-call.html" class="book-call-btn" target="_blank" rel="noopener">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Book a Call</span>
-                    </a>
                 </div>
             </div>
         </header>

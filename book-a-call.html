@@ -172,16 +172,20 @@
             position: relative;
         }
         
-        /* This CSS will be injected to handle the Cal.com branding */
-        .cal-embed-wrapper::after {
-            content: "";
-            position: absolute;
+        /* This CSS targets the Cal.com branding */
+        .cal-embed-wrapper iframe {
+            position: relative;
+        }
+        
+        /* Style for injected CSS to hide Cal.com branding */
+        .cal-branding-remover {
+            position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 30px;
+            height: 40px;
             background-color: #191919;
-            z-index: 100;
+            z-index: 999999;
         }
         
         /* Meeting info card styling - centered, no background */
@@ -488,12 +492,66 @@
                         </script>
                         <!-- Script to remove Cal.com branding -->
                         <script>
-                          // Function to remove Cal.com branding
+                          // Also inject CSS to hide the branding
+                          function injectBrandingHider() {
+                            const iframe = document.querySelector('#my-cal-inline iframe');
+                            if (iframe && iframe.contentDocument) {
+                              // Check if we already injected the style
+                              if (!iframe.contentDocument.getElementById('cal-branding-hider')) {
+                                // Create style element
+                                const style = iframe.contentDocument.createElement('style');
+                                style.id = 'cal-branding-hider';
+                                style.textContent = `
+                                  div.p-2.text-center.text-xs.sm\\:text-right.max-w-3xl,
+                                  img[src*="cal.com/api/logo"],
+                                  a[href*="go.cal.com/booking"] {
+                                    display: none !important;
+                                    visibility: hidden !important;
+                                    opacity: 0 !important;
+                                    height: 0 !important;
+                                    overflow: hidden !important;
+                                  }
+                                  
+                                  /* Add a cover div at the bottom */
+                                  body::after {
+                                    content: "";
+                                    position: fixed;
+                                    bottom: 0;
+                                    left: 0;
+                                    right: 0;
+                                    height: 40px;
+                                    background-color: #191919;
+                                    z-index: 99999;
+                                  }
+                                `;
+                                
+                                // Append style to iframe document head
+                                try {
+                                  iframe.contentDocument.head.appendChild(style);
+                                } catch (e) {
+                                  console.log('Error injecting style:', e);
+                                }
+                              }
+                            }
+                          }
                           function removeCalBranding() {
                             const iframe = document.querySelector('#my-cal-inline iframe');
                             if (iframe && iframe.contentDocument) {
-                              const brandingElements = iframe.contentDocument.querySelectorAll('[data-testid="powered-by"]');
-                              brandingElements.forEach(el => {
+                              // Target the specific branding element
+                              const brandingDivs = iframe.contentDocument.querySelectorAll('div.p-2.text-center.text-xs.sm\\:text-right.max-w-3xl');
+                              brandingDivs.forEach(el => {
+                                el.style.display = 'none';
+                              });
+                              
+                              // Also look for the Cal.com logo image
+                              const logoImages = iframe.contentDocument.querySelectorAll('img[src*="cal.com/api/logo"]');
+                              logoImages.forEach(el => {
+                                el.style.display = 'none';
+                              });
+                              
+                              // Hide any links to Cal.com
+                              const calLinks = iframe.contentDocument.querySelectorAll('a[href*="cal.com"]');
+                              calLinks.forEach(el => {
                                 el.style.display = 'none';
                               });
                             }
@@ -505,6 +563,7 @@
                             if (iframe) {
                               iframe.onload = function() {
                                 removeCalBranding();
+                                injectBrandingHider();
                                 // Also set up a mutation observer to handle dynamic content
                                 if (iframe.contentDocument) {
                                   const observer = new MutationObserver(removeCalBranding);
@@ -514,9 +573,53 @@
                                   });
                                 }
                               };
+                              
+                              // Try to access iframe content
+                              try {
+                                if (iframe.contentDocument) {
+                                  removeCalBranding();
+                                  injectBrandingHider();
+                                  
+                                  // If we can access the iframe content now, set up the observer
+                                  const observer = new MutationObserver(removeCalBranding);
+                                  observer.observe(iframe.contentDocument.body, { 
+                                    childList: true, 
+                                    subtree: true 
+                                  });
+                                }
+                              } catch (e) {
+                                // If we can't access the iframe content yet, wait for the load event
+                              }
+                              
+                              // Don't clear the interval yet, keep checking
+                              // We'll run removeCalBranding every second for the first 10 seconds
+                              let count = 0;
+                              const brandingInterval = setInterval(() => {
+                                count++;
+                                removeCalBranding();
+                                injectBrandingHider();
+                                if (count >= 10) clearInterval(brandingInterval);
+                              }, 1000);
+                              
                               clearInterval(checkInterval);
                             }
                           }, 300);
+                          
+                          // Additional check when page is fully loaded
+                          window.addEventListener('load', function() {
+                            setTimeout(() => { 
+                              removeCalBranding(); 
+                              injectBrandingHider(); 
+                            }, 1000);
+                            setTimeout(() => { 
+                              removeCalBranding(); 
+                              injectBrandingHider(); 
+                            }, 2000);
+                            setTimeout(() => { 
+                              removeCalBranding(); 
+                              injectBrandingHider(); 
+                            }, 3000);
+                          });
                         </script>
                         <!-- Cal inline embed code ends -->
                     </div>

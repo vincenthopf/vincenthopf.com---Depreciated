@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iOS Home Screen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #000;
+            position: fixed;
+            touch-action: manipulation;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .safe-area {
+            width: 100%;
+            height: 100%;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .ios-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-bar {
+            height: 44px;
+            width: 100%;
+            padding: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .cellular-icon {
+            display: flex;
+            flex-direction: row;
+            gap: 1px;
+            margin-right: 4px;
+        }
+
+        .cellular-icon .bar {
+            width: 3px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 1px;
+        }
+
+        .cellular-icon .bar:nth-child(1) { height: 6px; }
+        .cellular-icon .bar:nth-child(2) { height: 8px; }
+        .cellular-icon .bar:nth-child(3) { height: 10px; }
+        .cellular-icon .bar:nth-child(4) { height: 12px; }
+
+        .battery-icon {
+            width: 28px;
+            height: 14px;
+            border: 2px solid #fff;
+            border-radius: 3px;
+            padding: 1px;
+            position: relative;
+        }
+
+        .battery-icon:after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 3px;
+            width: 2px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .battery-level {
+            height: 100%;
+            width: 54%;
+            background-color: #fff;
+            border-radius: 1px;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+            margin-top: 10px;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+            background-size: cover;
+            background-position: center;
+            font-size: 30px;
+            color: white;
+            transition: transform 0.1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .icon-label {
+            color: #fff;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        .dock-container {
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            margin-bottom: env(safe-area-inset-bottom, 34px);
+        }
+
+        .dock {
+            width: 100%;
+            max-width: 320px;
+            height: 84px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .dock .app-icon {
+            margin: 0 5px;
+        }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 5px;
+            background-color: #fff;
+            border-radius: 3px;
+        }
+
+        /* Company-specific icon styles */
+        .google-icon { background-color: #4285F4; }
+        .mail-icon { background-color: #4285F4; }
+        .photos-icon { background-color: #FF9E80; }
+        .music-icon { background-color: #FF5252; }
+        .maps-icon { background-color: #4CAF50; }
+        .calendar-icon { background-color: #FF9800; }
+        .notes-icon { background-color: #FDD835; }
+        .tasks-icon { background-color: #673AB7; }
+        .facebook-icon { background-color: #3b5998; }
+        .twitter-icon { background-color: #1DA1F2; }
+        .instagram-icon { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .youtube-icon { background-color: #FF0000; }
+        .phone-icon { background-color: #4CD964; }
+        .messages-icon { background-color: #34C759; }
+        .facetime-icon { background-color: #55D6BE; }
+        .settings-icon { background-color: #8E8E93; }
+        .chrome-icon { background-color: #4285F4; }
+        
+        /* SVG Icons for a more native look */
+        .svg-icon {
+            width: 60%;
+            height: 60%;
+            fill: white;
+            stroke: white;
+        }
+        
+        @media (max-height: 700px) {
+            .app-grid {
+                gap: 16px;
+                padding: 15px;
+            }
+            .icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 12px;
+            }
+            .dock {
+                height: 74px;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .app-grid {
+                gap: 12px;
+                padding: 10px;
+            }
+            .icon {
+                width: 45px;
+                height: 45px;
+                border-radius: 10px;
+            }
+            .icon-label {
+                font-size: 10px;
+            }
+            .dock {
+                height: 64px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="safe-area">
+        <button class="fullscreen-btn" id="fullscreen-btn">
+            <i class="fas fa-expand"></i>
+        </button>
+        
+        <div class="ios-screen">
+            <div class="status-bar">
+                <div class="status-left">
+                    <div class="time" id="current-time">11:25</div>
+                </div>
+                <div class="status-right">
+                    <div class="cellular-icon">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                    <div class="network-type">5G</div>
+                    <div class="battery-icon">
+                        <div class="battery-level"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="app-grid">
+                <!-- First row -->
+                <a href="https://www.google.com" target="_blank" class="app-icon">
+                    <div class="icon google-icon">
+                        <span style="color: white; font-weight: bold; font-size: 34px;">G</span>
+                    </div>
+                    <div class="icon-label">Google</div>
+                </a>
+                <a href="https://mail.google.com" target="_blank" class="app-icon">
+                    <div class="icon mail-icon">
+                        <i class="fas fa-envelope" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Mail</div>
+                </a>
+                <a href="https://photos.google.com" target="_blank" class="app-icon">
+                    <div class="icon photos-icon">
+                        <i class="fas fa-images" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Photos</div>
+                </a>
+                <a href="https://music.apple.com" target="_blank" class="app-icon">
+                    <div class="icon music-icon">
+                        <i class="fas fa-music" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Music</div>
+                </a>
+                
+                <!-- Second row -->
+                <a href="https://maps.google.com" target="_blank" class="app-icon">
+                    <div class="icon maps-icon">
+                        <i class="fas fa-map-marker-alt" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Maps</div>
+                </a>
+                <a href="https://calendar.google.com" target="_blank" class="app-icon">
+                    <div class="icon calendar-icon">
+                        <i class="fas fa-calendar-alt" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Calendar</div>
+                </a>
+                <a href="https://keep.google.com" target="_blank" class="app-icon">
+                    <div class="icon notes-icon">
+                        <i class="fas fa-sticky-note" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Notes</div>
+                </a>
+                <a href="https://www.google.com/tasks" target="_blank" class="app-icon">
+                    <div class="icon tasks-icon">
+                        <i class="fas fa-tasks" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Tasks</div>
+                </a>
+                
+                <!-- Third row -->
+                <a href="https://www.facebook.com" target="_blank" class="app-icon">
+                    <div class="icon facebook-icon">
+                        <i class="fab fa-facebook-f" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Facebook</div>
+                </a>
+                <a href="https://twitter.com" target="_blank" class="app-icon">
+                    <div class="icon twitter-icon">
+                        <i class="fab fa-twitter" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Twitter</div>
+                </a>
+                <a href="https://www.instagram.com" target="_blank" class="app-icon">
+                    <div class="icon instagram-icon">
+                        <i class="fab fa-instagram" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Instagram</div>
+                </a>
+                <a href="https://www.youtube.com" target="_blank" class="app-icon">
+                    <div class="icon youtube-icon">
+                        <i class="fab fa-youtube" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">YouTube</div>
+                </a>
+                
+                <!-- Fourth row -->
+                <a href="tel:" class="app-icon">
+                    <div class="icon phone-icon">
+                        <i class="fas fa-phone-alt" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Phone</div>
+                </a>
+                <a href="sms:" class="app-icon">
+                    <div class="icon messages-icon">
+                        <i class="fas fa-comment" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Messages</div>
+                </a>
+                <a href="#" class="app-icon">
+                    <div class="icon facetime-icon">
+                        <i class="fas fa-video" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">FaceTime</div>
+                </a>
+                <a href="#" class="app-icon">
+                    <div class="icon settings-icon">
+                        <i class="fas fa-cog" style="color: white;"></i>
+                    </div>
+                    <div class="icon-label">Settings</div>
+                </a>
+            </div>
+            
+            <div class="dock-container">
+                <div class="dock">
+                    <a href="https://www.google.com" target="_blank" class="app-icon">
+                        <div class="icon chrome-icon">
+                            <i class="fab fa-chrome" style="color: white;"></i>
+                        </div>
+                    </a>
+                    <a href="tel:" class="app-icon">
+                        <div class="icon phone-icon">
+                            <i class="fas fa-phone-alt" style="color: white;"></i>
+                        </div>
+                    </a>
+                    <a href="sms:" class="app-icon">
+                        <div class="icon messages-icon">
+                            <i class="fas fa-comment" style="color: white;"></i>
+                        </div>
+                    </a>
+                    <a href="https://mail.google.com" target="_blank" class="app-icon">
+                        <div class="icon mail-icon">
+                            <i class="fas fa-envelope" style="color: white;"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Update the time
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            
+            // Convert to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            const timeString = hours + ':' + minutes;
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        // Update time immediately and then every minute
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // Add tap effect to icons
+        document.querySelectorAll('.icon').forEach(icon => {
+            icon.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+            
+            // Add touch events for mobile
+            icon.addEventListener('touchstart', function(e) {
+                this.style.transform = 'scale(0.9)';
+                e.preventDefault();
+            });
+            icon.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+        
+        // Fullscreen functionality
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        
+        fullscreenBtn.addEventListener('click', toggleFullScreen);
+        fullscreenBtn.addEventListener('touchend', toggleFullScreen);
+        
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        }
+        
+        // Handle fullscreen changes
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        
+        function handleFullscreenChange() {
+            if (!document.fullscreenElement && 
+                !document.webkitFullscreenElement && 
+                !document.mozFullScreenElement && 
+                !document.msFullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        }
+    </script>
+</body>
+</html>

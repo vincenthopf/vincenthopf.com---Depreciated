@@ -31,35 +31,17 @@
         #iphone {
             width: 375px;
             height: 812px;
-            background: linear-gradient(160deg, #ffc2c2 0%, #ffc8a2 50%, #a3deff 100%);
+            background: linear-gradient(160deg, #ffcdc6 0%, #ffc8a2 50%, #c3e5ff 100%);
             border-radius: 40px;
             position: relative;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding-top: 30px; /* Add space at top for system status bar */
         }
         
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 20px;
-            color: #000;
-            font-weight: bold;
-            font-size: 14px;
-            height: 44px;
-        }
+        /* Status bar removed to use system status bar */
         
-        .notch {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 180px;
-            height: 30px;
-            background-color: #000;
-            border-bottom-left-radius: 18px;
-            border-bottom-right-radius: 18px;
-            z-index: 10;
-        }
+        /* Notch removed */
         
         .grid-container {
             display: grid;
@@ -80,8 +62,8 @@
         }
         
         .weather-widget {
-            background-color: #1c64db;
-            height: 120px;
+            background-color: #227aff;
+            height: 140px;
         }
         
         /* Photos widget styles removed */
@@ -96,14 +78,14 @@
         .icon {
             width: 60px;
             height: 60px;
-            border-radius: 15px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
+            font-size: 28px;
             color: white;
             margin-bottom: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .icon-label {
@@ -133,16 +115,17 @@
             bottom: 130px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
-            height: 40px;
+            width: 65%;
+            height: 36px;
             background-color: rgba(255,255,255,0.2);
-            border-radius: 20px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(10px);
             color: rgba(0,0,0,0.7);
             font-size: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .widget-title {
@@ -214,42 +197,33 @@
 
         .red-dot {
             position: absolute;
-            top: -6px;
-            right: -6px;
-            width: 18px;
-            height: 18px;
+            top: -4px;
+            right: -4px;
+            width: 20px;
+            height: 20px;
             background-color: #ff3b30;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div id="iphone">
-        <div class="notch"></div>
-        <div class="status-bar">
-            <span class="time">9:41</span>
-            <div class="icons">
-                <span class="signal">●●●●</span>
-                <span class="wifi">●</span>
-                <span class="battery">●</span>
-            </div>
-        </div>
         
         <div class="grid-container">
             <!-- Weather Widget - Full Width & Symmetric -->
-            <div class="widget weather-widget" style="grid-column: span 4; height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <div id="location">La Jolla</div>
-                <div class="widget-title" id="temperature">73°</div>
-                <div class="widget-subtitle">
-                    <span class="weather-icon">☁️</span><span id="weather-condition">Mostly Cloudy</span>
+            <div class="widget weather-widget" style="grid-column: span 4; height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-bottom: 10px; border-radius: 24px;">
+                <div id="location" style="font-size: 20px; margin-bottom: 5px;">Armidale</div>
+                <div class="widget-title" id="temperature" style="font-size: 48px; margin: 0;">62°</div>
+                <div class="widget-subtitle" style="margin: 5px 0;">
+                    <span class="weather-icon">🌤️</span><span id="weather-condition">Mostly Sunny</span>
                 </div>
-                <div class="widget-detail">H:<span id="high-temp">74</span>° L:<span id="low-temp">64</span>°</div>
+                <div class="widget-detail">H:<span id="high-temp">64</span>° L:<span id="low-temp">60</span>°</div>
             </div>
             
             <!-- App Icons - Row 1 -->

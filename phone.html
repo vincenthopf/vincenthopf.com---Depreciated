@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>iOS 18 Home</title>
+    <meta name="description" content="iOS 18 Home Screen Experience">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="iOS 18">
+    <link rel="apple-touch-icon" href="https://cdnjs.cloudflare.com/ajax/libs/simple-icons/3.0.1/apple.svg" sizes="180x180">
+    <meta name="theme-color" content="#7c2a3f">
+    
+    <!-- Simplified manifest approach -->
+    <link rel="manifest" href="data:application/json;base64,ewogICAgICAgICAgICAibmFtZSI6ICJpT1MgMTggSG9tZSIsCiAgICAgICAgICAgICJzaG9ydF9uYW1lIjogImlPUyAxOCIsCiAgICAgICAgICAgICJkZXNjcmlwdGlvbiI6ICJpT1MgMTggSG9tZSBTY3JlZW4gRXhwZXJpZW5jZSIsCiAgICAgICAgICAgICJzdGFydF91cmwiOiAiLiIsCiAgICAgICAgICAgICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICAgICAgICAgICAiYmFja2dyb3VuZF9jb2xvciI6ICIjN2MyYTNmIiwKICAgICAgICAgICAgInRoZW1lX2NvbG9yIjogIiM3YzJhM2YiLAogICAgICAgICAgICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiCiAgICAgICAgfQ==">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        html {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            /* iOS 18 background with curves */
+            background: linear-gradient(135deg, #7c2a3f 0%, #d05e89 40%, #2a4366 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            position: fixed;
+            touch-action: manipulation;
+            padding-top: env(safe-area-inset-top, 40px);
+        }
+
+        /* Curved shape for background */
+        .background-curve {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80%;
+            height: 80%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+            z-index: -1;
+        }
+
+        .pwa-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            z-index: 1000;
+            width: 300px;
+            text-align: center;
+            display: none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .pwa-prompt-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .pwa-prompt-text {
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .pwa-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pwa-button {
+            background-color: #0A84FF;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .pwa-button.cancel {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .fullscreen-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .ios-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 0 15px;
+            max-width: 430px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .clock-widget {
+            width: 170px;
+            height: 170px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 28px;
+            margin: 40px auto 30px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .clock-face {
+            width: 130px;
+            height: 130px;
+            background-color: white;
+            border-radius: 65px;
+            position: relative;
+        }
+
+        .clock-center {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: black;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .hour-hand, .minute-hand, .second-hand {
+            position: absolute;
+            transform-origin: bottom center;
+            top: 50%;
+            left: 50%;
+            border-radius: 10px;
+        }
+
+        .hour-hand {
+            width: 4px;
+            height: 35px;
+            background-color: black;
+            transform: translate(-50%, -100%) rotate(0deg);
+            z-index: 8;
+        }
+
+        .minute-hand {
+            width: 3px;
+            height: 50px;
+            background-color: black;
+            transform: translate(-50%, -100%) rotate(0deg);
+            z-index: 9;
+        }
+
+        .second-hand {
+            width: 1px;
+            height: 55px;
+            background-color: orange;
+            transform: translate(-50%, -100%) rotate(0deg);
+            z-index: 10;
+        }
+
+        .clock-tick {
+            position: absolute;
+            width: 1px;
+            height: 5px;
+            background-color: #999;
+            top: 5px;
+            left: 50%;
+            transform-origin: 0 60px;
+        }
+
+        .marking-number {
+            position: absolute;
+            font-size: 18px;
+            font-weight: 500;
+            color: black;
+            text-align: center;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+        }
+
+        .clock-cup {
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: #999;
+            font-weight: 400;
+        }
+
+        .clock-label {
+            color: white;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 24px;
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+        }
+
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Safari with white background */
+        .safari-icon {
+            background-color: white;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .safari-inner {
+            width: 42px;
+            height: 42px;
+            position: relative;
+        }
+
+        .safari-inner svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Claude icon - coral with white starburst */
+        .claude-icon {
+            background-color: #e57a5d;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .claude-starburst {
+            width: 38px;
+            height: 38px;
+        }
+
+        .starburst-line {
+            position: absolute;
+            background-color: white;
+            width: 3px;
+            height: 24px;
+            top: 50%;
+            left: 50%;
+            transform-origin: center;
+            border-radius: 2px;
+        }
+
+        .starburst-line:nth-child(1) { transform: translate(-50%, -50%) rotate(0deg); }
+        .starburst-line:nth-child(2) { transform: translate(-50%, -50%) rotate(22.5deg); }
+        .starburst-line:nth-child(3) { transform: translate(-50%, -50%) rotate(45deg); }
+        .starburst-line:nth-child(4) { transform: translate(-50%, -50%) rotate(67.5deg); }
+        .starburst-line:nth-child(5) { transform: translate(-50%, -50%) rotate(90deg); }
+        .starburst-line:nth-child(6) { transform: translate(-50%, -50%) rotate(112.5deg); }
+        .starburst-line:nth-child(7) { transform: translate(-50%, -50%) rotate(135deg); }
+        .starburst-line:nth-child(8) { transform: translate(-50%, -50%) rotate(157.5deg); }
+
+        /* Afterpay - mint green with arrows */
+        .afterpay-icon {
+            background-color: #c8ffe7;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .afterpay-arrows {
+            width: 35px;
+            height: 24px;
+            position: relative;
+        }
+
+        .afterpay-arrow {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid black;
+            border-left: 0;
+            border-bottom: 0;
+        }
+
+        .afterpay-left {
+            transform: rotate(-135deg);
+            left: 0;
+        }
+
+        .afterpay-right {
+            transform: rotate(45deg);
+            right: 0;
+        }
+
+        /* Mail icon - blue with white envelope */
+        .mail-icon {
+            background-color: #1a82fb;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mail-inner {
+            width: 30px;
+            height: 24px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            background-color: #FF3B30;
+            border-radius: 9px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* Calendar - white background */
+        .calendar-icon {
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .calendar-header {
+            width: 100%;
+            height: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .calendar-day {
+            font-size: 11px;
+            font-weight: bold;
+            color: #FF3B30;
+        }
+
+        .calendar-date {
+            font-size: 28px;
+            font-weight: 500;
+            color: black;
+            text-align: center;
+            margin-top: 2px;
+        }
+
+        /* Maps icon - blue with white pin */
+        .maps-icon {
+            background-color: #007AFF;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .maps-inner {
+            width: 30px;
+            height: 30px;
+        }
+
+        .maps-circle {
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        /* App Store - white background with blue A */
+        .app-store-icon {
+            background-color: white;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-store-inner {
+            width: 36px;
+            height: 36px;
+            color: #007AFF;
+            font-weight: bold;
+            font-size: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Settings - dark gray with gear */
+        .settings-icon {
+            background-color: #2f2f2f;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .settings-inner {
+            width: 30px;
+            height: 30px;
+            color: #aaaaaa;
+        }
+
+        .icon-label {
+            color: #fff;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 400;
+            margin-top: 5px;
+        }
+
+        .search-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .search-bar {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            width: 150px;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .search-bar i {
+            color: white;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .search-text {
+            color: white;
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .dock-container {
+            margin-top: auto;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+            margin-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        .dock {
+            background-color: rgba(50, 50, 50, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 15px 20px;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .phone-icon {
+            background-color: rgba(30, 30, 30, 0.8);
+            border-radius: 14px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .phone-inner {
+            width: 30px;
+            height: 30px;
+            color: white;
+        }
+
+        .messages-icon {
+            background-color: rgba(30, 30, 30, 0.8);
+            border-radius: 14px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .messages-inner {
+            width: 30px;
+            height: 30px;
+            color: white;
+        }
+
+        .notes-icon {
+            background-color: white;
+            border-radius: 14px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .notes-block {
+            width: 30px;
+            height: 30px;
+            position: relative;
+            transform: rotate(-10deg);
+        }
+
+        .notes-n {
+            font-size: 26px;
+            font-weight: bold;
+            color: black;
+        }
+
+        .control-center-icon {
+            background-color: rgba(150, 150, 150, 0.8);
+            border-radius: 14px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 3px;
+            width: 30px;
+            height: 30px;
+        }
+
+        .control-item {
+            background-color: black;
+            border-radius: 3px;
+            width: 100%;
+            height: 100%;
+        }
+        
+        @media (max-height: 700px) {
+            .clock-widget {
+                width: 150px;
+                height: 150px;
+                margin: 20px auto;
+            }
+            .clock-face {
+                width: 110px;
+                height: 110px;
+            }
+            .app-grid {
+                gap: 18px;
+            }
+            .icon {
+                width: 55px;
+                height: 55px;
+            }
+        }
+        
+        @media (max-height: 600px) {
+            .clock-widget {
+                width: 130px;
+                height: 130px;
+                margin: 15px auto;
+            }
+            .clock-face {
+                width: 100px;
+                height: 100px;
+            }
+            .app-grid {
+                gap: 15px;
+            }
+            .icon {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-curve"></div>
+    
+    <div class="pwa-prompt" id="pwa-prompt">
+        <div class="pwa-prompt-title">Add to Home Screen</div>
+        <div class="pwa-prompt-text">Install this app on your home screen for a more native experience.</div>
+        <div class="pwa-buttons">
+            <button class="pwa-button cancel" id="pwa-cancel">Later</button>
+            <button class="pwa-button install" id="pwa-install">Install</button>
+        </div>
+    </div>
+
+    <div class="ios-screen">
+        <div class="clock-widget">
+            <div class="clock-face" id="clock-face">
+                <div class="clock-cup">CUP</div>
+                <div id="clock-ticks"></div>
+                <div class="hour-hand" id="hour-hand"></div>
+                <div class="minute-hand" id="minute-hand"></div>
+                <div class="second-hand" id="second-hand"></div>
+                <div class="clock-center"></div>
+            </div>
+            <div class="clock-label">Clock</div>
+        </div>
+        
+        <div class="app-grid">
+            <!-- First row -->
+            <a href="https://www.apple.com/safari/" target="_blank" class="app-icon">
+                <div class="icon safari-icon">
+                    <div class="safari-inner">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="48" fill="#007AFF"/>
+                            <circle cx="50" cy="50" r="40" fill="white"/>
+                            <line x1="50" y1="10" x2="50" y2="90" stroke="#007AFF" stroke-width="2"/>
+                            <line x1="10" y1="50" x2="90" y2="50" stroke="#007AFF" stroke-width="2"/>
+                            <line x1="15" y1="15" x2="85" y2="85" stroke="#E74C3C" stroke-width="2"/>
+                            <line x1="15" y1="85" x2="85" y2="15" stroke="#E74C3C" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="icon-label">Safari</div>
+            </a>
+            <a href="#" class="app-icon">
+                <div class="icon claude-icon">
+                    <div class="claude-starburst">
+                        <div class="starburst-line"></div>
+                        <div class="starburst-line"></div>
+                        <div class="starburst-line"></div>
+                        <div class="starburst-line"></div>
+                        <div class="starburst-line"></div>
+                        <div class="starburst-line"></div>
+                        <div class="starburst-line"></div>
+                        <div class="starburst-line"></div>
+                    </div>
+                </div>
+                <div class="icon-label">Claude</div>
+            </a>
+            <a href="#" class="app-icon">
+                <div class="icon afterpay-icon">
+                    <div class="afterpay-arrows">
+                        <div class="afterpay-arrow afterpay-left"></div>
+                        <div class="afterpay-arrow afterpay-right"></div>
+                    </div>
+                </div>
+                <div class="icon-label">Photos</div>
+            </a>
+            <a href="https://mail.google.com" target="_blank" class="app-icon">
+                <div class="icon mail-icon">
+                    <div class="mail-inner">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="24" height="18" rx="2" fill="#1a82fb"/>
+                            <path d="M2,6 L12,12 L22,6" stroke="white" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="notification-badge">5</div>
+                </div>
+                <div class="icon-label">Mail</div>
+            </a>
+            
+            <!-- Second row -->
+            <a href="#" class="app-icon">
+                <div class="icon calendar-icon">
+                    <div class="calendar-header">
+                        <div class="calendar-day">THU</div>
+                    </div>
+                    <div class="calendar-date">27</div>
+                </div>
+                <div class="icon-label">Calendar</div>
+            </a>
+            <a href="#" class="app-icon">
+                <div class="icon maps-icon">
+                    <div class="maps-inner">
+                        <div class="maps-circle">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="10" r="3" fill="#007AFF"/>
+                                <path d="M12,21 L17,14 C19,11.5 19,8 12,8 C5,8 5,11.5 7,14 L12,21" fill="#007AFF"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-label">Maps</div>
+            </a>
+            <a href="#" class="app-icon">
+                <div class="icon app-store-icon">
+                    <div class="app-store-inner">
+                        A
+                    </div>
+                </div>
+                <div class="icon-label">App Store</div>
+            </a>
+            <a href="#" class="app-icon">
+                <div class="icon settings-icon">
+                    <div class="settings-inner">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12,15.5 C14,15.5 15.5,14 15.5,12 C15.5,10 14,8.5 12,8.5 C10,8.5 8.5,10 8.5,12 C8.5,14 10,15.5 12,15.5 Z" stroke="#aaaaaa" stroke-width="1.5" fill="none"/>
+                            <path d="M19.14,12.94 C19.18,12.64 19.2,12.33 19.2,12 C19.2,11.68 19.18,11.36 19.14,11.06 L21.16,9.48 C21.34,9.34 21.39,9.07 21.28,8.87 L19.36,5.55 C19.24,5.33 19,5.26 18.77,5.33 L16.38,6.29 C15.88,5.91 15.35,5.59 14.76,5.35 L14.4,2.81 C14.36,2.57 14.16,2.4 13.92,2.4 L10.08,2.4 C9.84,2.4 9.65,2.57 9.61,2.81 L9.25,5.35 C8.66,5.59 8.12,5.92 7.63,6.29 L5.24,5.33 C5.02,5.25 4.77,5.33 4.65,5.55 L2.74,8.87 C2.62,9.08 2.66,9.34 2.86,9.48 L4.88,11.06 C4.84,11.36 4.8,11.69 4.8,12 C4.8,12.31 4.82,12.64 4.86,12.94 L2.84,14.52 C2.66,14.66 2.61,14.93 2.72,15.13 L4.64,18.45 C4.76,18.67 5,18.74 5.23,18.67 L7.62,17.71 C8.12,18.09 8.65,18.41 9.24,18.65 L9.6,21.19 C9.65,21.43 9.84,21.6 10.08,21.6 L13.92,21.6 C14.16,21.6 14.36,21.43 14.39,21.19 L14.75,18.65 C15.34,18.41 15.88,18.09 16.37,17.71 L18.76,18.67 C18.98,18.75 19.23,18.67 19.35,18.45 L21.27,15.13 C21.39,14.91 21.34,14.66 21.15,14.52 L19.14,12.94 Z" stroke="#aaaaaa" stroke-width="1.5" fill="none"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="icon-label">Settings</div>
+            </a>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <div class="search-text">Search</div>
+            </div>
+        </div>
+        
+        <div class="dock-container">
+            <div class="dock">
+                <a href="tel:" class="app-icon">
+                    <div class="phone-icon">
+                        <div class="phone-inner">
+                            <i class="fas fa-phone-alt" style="color: white; font-size: 22px;"></i>
+                        </div>
+                    </div>
+                </a>
+                <a href="sms:" class="app-icon">
+                    <div class="messages-icon">
+                        <div class="messages-inner">
+                            <i class="fas fa-comment" style="color: white; font-size: 22px;"></i>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="app-icon">
+                    <div class="notes-icon">
+                        <div class="notes-block">
+                            <span class="notes-n">N</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="app-icon">
+                    <div class="control-center-icon">
+                        <div class="control-grid">
+                            <div class="control-item"></div>
+                            <div class="control-item"></div>
+                            <div class="control-item"></div>
+                            <div class="control-item"></div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <button class="fullscreen-btn" id="fullscreen-btn">
+        <i class="fas fa-expand"></i>
+    </button>
+    
+    <script>
+        // Create clock ticks
+        function createClockTicks() {
+            const clockTicks = document.getElementById('clock-ticks');
+            for (let i = 0; i < 60; i++) {
+                const tick = document.createElement('div');
+                tick.className = 'clock-tick';
+                const angle = i * 6;
+                tick.style.transform = `rotate(${angle}deg)`;
+                if (i % 5 === 0) {
+                    tick.style.height = '10px';
+                    tick.style.width = '2px';
+                    tick.style.backgroundColor = '#333';
+                }
+                clockTicks.appendChild(tick);
+            }
+        }
+        
+        // Create clock numbers
+        function createClockNumbers() {
+            const clockFace = document.getElementById('clock-face');
+            for (let i = 1; i <= 12; i++) {
+                const number = document.createElement('div');
+                number.className = 'marking-number';
+                number.textContent = i;
+                
+                // Position around the clock
+                const angle = (i * 30) - 90; // 30 degrees per hour, starting at -90 (12 o'clock)
+                const radius = 45; // percentage from center
+                const radian = angle * (Math.PI / 180);
+                const x = 50 + radius * Math.cos(radian);
+                const y = 50 + radius * Math.sin(radian);
+                
+                number.style.left = `${x}%`;
+                number.style.top = `${y}%`;
+                number.style.transform = `translate(-50%, -50%)`;
+                
+                clockFace.appendChild(number);
+            }
+        }
+        
+        // Update clock hands
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Calculate angles
+            const hourAngle = (hours * 30) + (minutes * 0.5); // 30 degrees per hour + 0.5 degrees per minute
+            const minuteAngle = minutes * 6; // 6 degrees per minute
+            const secondAngle = seconds * 6; // 6 degrees per second
+            
+            // Rotate hands
+            document.getElementById('hour-hand').style.transform = `translate(-50%, -100%) rotate(${hourAngle}deg)`;
+            document.getElementById('minute-hand').style.transform = `translate(-50%, -100%) rotate(${minuteAngle}deg)`;
+            document.getElementById('second-hand').style.transform = `translate(-50%, -100%) rotate(${secondAngle}deg)`;
+        }
+        
+        // Initialize clock
+        createClockTicks();
+        createClockNumbers();
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Add tap effect to icons
+        document.querySelectorAll('.icon').forEach(icon => {
+            icon.addEventListener('mousedown', function() {
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+            
+            // Add touch events for mobile
+            icon.addEventListener('touchstart', function(e) {
+                this.style.transform = 'scale(0.9)';
+                e.preventDefault();
+            });
+            icon.addEventListener('touchend', function() {
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+        
+        // Fullscreen functionality
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        
+        fullscreenBtn.addEventListener('click', toggleFullScreen);
+        fullscreenBtn.addEventListener('touchend', toggleFullScreen);
+        
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        }
+        
+        // Check if app is running as installed PWA
+        function isRunningAsPWA() {
+            return window.matchMedia('(display-mode: standalone)').matches || 
+                   window.navigator.standalone || // iOS Safari
+                   document.referrer.includes('android-app://');
+        }
+
+        // Show install prompt if not running as PWA
+        function showInstallPrompt() {
+            if (!isRunningAsPWA()) {
+                setTimeout(function() {
+                    document.getElementById('pwa-prompt').style.display = 'block';
+                }, 3000);
+            }
+        }
+
+        // Handle install button click
+        document.getElementById('pwa-install').addEventListener('click', function() {
+            document.getElementById('pwa-prompt').style.display = 'none';
+            
+            // Show instructions based on device
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOS) {
+                alert('To install this app:\n\n1. Tap the Share icon ⬆️\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" in the top right');
+            } else {
+                alert('To install this app:\n\n1. Tap the menu button (⋮ or ⋯)\n2. Tap "Add to Home screen" or "Install App"');
+            }
+        });
+
+        // Handle cancel button click
+        document.getElementById('pwa-cancel').addEventListener('click', function() {
+            document.getElementById('pwa-prompt').style.display = 'none';
+        });
+
+        // Initialize the PWA prompt
+        showInstallPrompt();
+    </script>
+</body>
+</html>

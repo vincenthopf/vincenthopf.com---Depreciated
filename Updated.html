@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vincent Hopf</title>
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.min.css">
+    </noscript>
+    <!-- Analytics tracking with defer -->
+    <script defer src="https://analytics.vjh.io/script.js" data-website-id="d60d6d0f-ed54-4ca2-86f6-c0ccfe83d841"></script>
+    <style>
+        /* Critical CSS - Vision Pro Inspired Theme */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --text-color: #1d1d1f; /* Apple's dark grey */
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: rgba(0, 0, 0, 0.1);
+            --accent-color: #007aff; /* Apple blue */
+            --node-color: rgba(0, 0, 0, 0.2);
+            --line-color: rgba(0, 0, 0, 0.08);
+            --border-radius: 16px; /* Softer radius */
+            --blur-amount: 15px;
+            --transition-speed: 0.3s;
+        }
+
+        .dark {
+            --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #1a1a1d 100%);
+            --text-color: #f5f5f7; /* Apple's light grey */
+            --glass-bg: rgba(40, 40, 40, 0.65); /* Darker glass */
+            --glass-border: rgba(60, 60, 60, 0.8);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+            --accent-color: #0a84ff; /* Lighter Apple blue */
+            --node-color: rgba(255, 255, 255, 0.2);
+            --line-color: rgba(255, 255, 255, 0.08);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            html:not(.light) {
+                color-scheme: dark;
+                --bg-gradient: linear-gradient(135deg, #2c3e50 0%, #1a1a1d 100%);
+                --text-color: #f5f5f7;
+                --glass-bg: rgba(40, 40, 40, 0.65);
+                --glass-border: rgba(60, 60, 60, 0.8);
+                --glass-shadow: rgba(0, 0, 0, 0.3);
+                --accent-color: #0a84ff;
+                --node-color: rgba(255, 255, 255, 0.2);
+                --line-color: rgba(255, 255, 255, 0.08);
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: var(--bg-gradient);
+            transition: background var(--transition-speed) ease, color var(--transition-speed) ease;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            font-weight: 400;
+        }
+
+        #network-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 760px; /* Slightly narrower */
+            margin: 0 auto;
+            padding: 0 1rem; /* Reduced padding */
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glass Container Style */
+        .glass-container {
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-amount));
+            -webkit-backdrop-filter: blur(var(--blur-amount)); /* Safari */
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 2rem; /* Generous padding inside */
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 32px 0 var(--glass-shadow);
+            transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 5rem 0 2rem; /* More top padding */
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .profile-pic {
+            width: 130px; /* Slightly smaller */
+            height: 130px;
+            border-radius: 50%; /* Circular */
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+            border: 3px solid var(--glass-border); /* Subtle border */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: border-color var(--transition-speed) ease;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700; /* Bold but not extra bold */
+            letter-spacing: -0.5px;
+        }
+
+        .social-links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--text-color);
+            background-color: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            width: 44px; /* Slightly smaller */
+            height: 44px;
+            border-radius: 12px; /* Rounded square */
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 2px 5px var(--glass-shadow);
+            backdrop-filter: blur(5px); /* Subtle blur on icons too */
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px var(--glass-shadow);
+            background-color: rgba(255, 255, 255, 0.75); /* Brighter on hover (light) */
+            border-color: rgba(255, 255, 255, 0.9);
+        }
+         .dark .social-icon:hover {
+            background-color: rgba(60, 60, 60, 0.8); /* Darker hover */
+            border-color: rgba(80, 80, 80, 0.9);
+         }
+
+        .social-icon i {
+            font-size: 1.3rem;
+            transition: transform var(--transition-speed) ease;
+        }
+
+        /* Section Styling */
+        main section {
+            /* Uses .glass-container */
+        }
+
+        section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+            letter-spacing: -0.2px;
+            opacity: 0.9;
+        }
+
+        section p {
+            margin-bottom: 1rem;
+            opacity: 0.85;
+            font-size: 1rem; /* Slightly smaller body text */
+            max-width: 60ch; /* Improve readability */
+        }
+
+        section a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity var(--transition-speed) ease;
+        }
+        section a:hover {
+            opacity: 0.75;
+            text-decoration: underline;
+        }
+
+        /* Skills Section */
+        .skills-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .skill-item {
+            background-color: rgba(0, 0, 0, 0.05); /* Subtle background pill */
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px; /* Pill shape */
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+            opacity: 0.9;
+        }
+        .dark .skill-item {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Projects Section */
+        .project-link {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+         .project-link i {
+            margin-right: 0.5rem;
+            opacity: 0.7;
+         }
+
+        /* Book a Call Section */
+        .book-call-btn {
+            display: inline-flex; /* Use inline-flex */
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1.8rem;
+            background-color: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px; /* Match icon radius */
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.2);
+        }
+        .dark .book-call-btn {
+             box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3);
+        }
+
+        .book-call-btn:hover {
+            transform: translateY(-2px);
+            background-color: #0056b3; /* Darker blue on hover */
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.3);
+        }
+        .dark .book-call-btn:hover {
+             background-color: #0a84ff; /* Keep accent color but brighter shadow */
+             box-shadow: 0 6px 20px rgba(10, 132, 255, 0.4);
+        }
+
+        .book-call-btn i {
+            font-size: 1.1rem;
+        }
+
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            margin-top: 1rem;
+            color: var(--text-color);
+            opacity: 0.6;
+            font-size: 0.85rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Reduced Motion Preferences */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            #network-canvas { display: none; } /* Hide animation */
+             .social-icon:hover, .book-call-btn:hover {
+                transform: none;
+            }
+        }
+
+         /* Responsive */
+         @media (max-width: 768px) {
+            header { padding: 4rem 0 1.5rem; }
+            header h1 { font-size: 2.4rem; }
+            .profile-pic { width: 110px; height: 110px; }
+            .glass-container { padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;}
+            section h2 { font-size: 1.6rem; margin-bottom: 1rem;}
+            section p { font-size: 0.95rem; }
+            .book-call-btn { padding: 0.7rem 1.5rem; font-size: 0.95rem;}
+         }
+          @media (max-width: 480px) {
+             header h1 { font-size: 2rem; }
+             .profile-pic { width: 90px; height: 90px; }
+             .social-icon { width: 40px; height: 40px; }
+             .social-icon i { font-size: 1.1rem; }
+             .skill-item { font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+             .book-call-btn { width: 100%; justify-content: center;} /* Full width button */
+          }
+
+    </style>
+</head>
+<body>
+    <canvas id="network-canvas"></canvas>
+    <div class="container">
+        <header>
+            <img src="/assets/profile.jpg" alt="Vincent Hopf" class="profile-pic" width="130" height="130" loading="eager">
+            <h1>Vincent Hopf</h1>
+            <div class="social-links">
+                 <a href="https://www.instagram.com/vincenthopf/" class="social-icon" target="_blank" rel="noopener" aria-label="Instagram">
+                    <i class="fab fa-instagram" aria-hidden="true"></i>
+                </a>
+                <a href="https://www.skool.com/@vincent" class="social-icon" target="_blank" rel="noopener" aria-label="Skool">
+                    <i class="fas fa-graduation-cap" aria-hidden="true"></i>
+                </a>
+                <a href="https://github.com/vincenthopf" class="social-icon" target="_blank" rel="noopener" aria-label="GitHub">
+                    <i class="fab fa-github" aria-hidden="true"></i>
+                </a>
+                 <!-- Add Waves Labs link here if desired, or keep in Projects section -->
+                 <a href="https://labs.waves.sh/" class="social-icon" target="_blank" rel="noopener" aria-label="Waves Labs">
+                    <i class="fas fa-flask" aria-hidden="true"></i> <!-- Example Icon -->
+                </a>
+            </div>
+        </header>
+
+        <main>
+            <section id="about" class="glass-container" aria-labelledby="about-title">
+                <h2 id="about-title">About Me</h2>
+                <p>
+                    Hi, I'm Vincent. I'm a passionate developer and creator based in [Your Location, e.g., Australia]. I enjoy building innovative digital solutions and exploring the intersection of technology and creativity.
+                </p>
+                <p>
+                    My focus is on [mention key areas like web development, specific technologies, creative coding, etc.]. I'm always eager to learn new things and tackle challenging projects.
+                </p>
+                <!-- Add more personal details or philosophy here -->
+            </section>
+
+            <section id="skills" class="glass-container" aria-labelledby="skills-title">
+                <h2 id="skills-title">Skills</h2>
+                <ul class="skills-list">
+                    <li class="skill-item">JavaScript (ES6+)</li>
+                    <li class="skill-item">React</li>
+                    <li class="skill-item">Node.js</li>
+                    <li class="skill-item">HTML5 & CSS3</li>
+                    <li class="skill-item">UI/UX Design Principles</li>
+                    <li class="skill-item">Git & Version Control</li>
+                    <li class="skill-item">API Integration</li>
+                    <li class="skill-item">Cloud Platforms (e.g., AWS, Vercel)</li>
+                    <li class="skill-item">Web Performance Optimization</li>
+                    <!-- Add more specific skills -->
+                </ul>
+            </section>
+
+            <section id="projects" class="glass-container" aria-labelledby="projects-title">
+                <h2 id="projects-title">Projects & Contributions</h2>
+                 <p>Check out some of my work and experiments:</p>
+                 <a href="https://github.com/vincenthopf" class="project-link" target="_blank" rel="noopener">
+                     <i class="fab fa-github" aria-hidden="true"></i> GitHub Profile
+                 </a>
+                 <a href="https://labs.waves.sh/" class="project-link" target="_blank" rel="noopener">
+                     <i class="fas fa-flask" aria-hidden="true"></i> Waves Labs Experiments
+                 </a>
+                 <!-- Add direct links to specific projects if desired -->
+            </section>
+
+            <section id="book-call" class="glass-container" aria-labelledby="book-call-title">
+                <h2 id="book-call-title">Let's Connect</h2>
+                <p>
+                    Interested in collaborating or discussing a project? Feel free to book a quick 30-minute call with me.
+                </p>
+                <a href="https://cal.com/vhopf/30?user=vhopf&layout=mobile&duration=30" class="book-call-btn" target="_blank" rel="noopener">
+                    <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+                    <span>Book a 30-Min Call</span>
+                </a>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; <span id="current-year"></span> Vincent Hopf</p>
+            <p>ABN: 72 497 571 166</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Elements ---
+            const currentYearEl = document.getElementById('current-year');
+
+            // --- Basic Setup ---
+            if (currentYearEl) {
+                currentYearEl.textContent = new Date().getFullYear();
+            }
+
+            // --- Dark Mode Handling ---
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+            function updateTheme(isDark) {
+                document.documentElement.classList.toggle('dark', isDark);
+                document.documentElement.classList.toggle('light', !isDark);
+                // Update network animation colors if it exists and has the update method
+                if (window.networkAnimation && typeof window.networkAnimation.updateColors === 'function') {
+                    window.networkAnimation.updateColors(isDark);
+                }
+            }
+
+            // Listener for system preference changes
+            darkModeMediaQuery.addEventListener('change', (e) => {
+                updateTheme(e.matches);
+            });
+
+            // Initial theme set
+            updateTheme(darkModeMediaQuery.matches);
+
+
+            // --- Network Animation (Adapted from previous version) ---
+            class NetworkAnimation {
+                constructor(canvas) {
+                    this.canvas = canvas;
+                    this.ctx = canvas.getContext('2d', { alpha: true });
+                    this.particles = [];
+                    // Initial dark mode state check
+                    this.isDarkMode = document.documentElement.classList.contains('dark');
+                    this.mousePosition = { x: null, y: null };
+                    this.mouseRadius = 100; // Slightly smaller interaction radius
+                    this.animationFrameId = null;
+                    this.paused = document.hidden;
+                    this.pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+
+
+                    this.handleResize = this.throttle(this._handleResize.bind(this), 200);
+                    this.handleMouseMove = this.throttle(this._handleMouseMove.bind(this), 30); // Less frequent update ok
+
+                    this._setup();
+                }
+
+                _setup() {
+                    window.addEventListener('resize', this.handleResize);
+                    document.addEventListener('mousemove', this.handleMouseMove);
+                    document.addEventListener('mouseleave', this._handleMouseLeave.bind(this));
+                     // Passive listeners for touch improve scroll performance
+                    document.addEventListener('touchmove', this.throttle(this._handleTouchMove.bind(this), 30), { passive: true });
+                    document.addEventListener('touchend', this._handleMouseLeave.bind(this), { passive: true });
+                    document.addEventListener('visibilitychange', this._handleVisibilityChange.bind(this));
+
+                    this._handleResize(); // Initial setup
+                    if (!this.paused) {
+                       this.animate();
+                    }
+                }
+
+                throttle(func, limit) {
+                    let inThrottle;
+                    return (...args) => {
+                        if (!inThrottle) {
+                            func.apply(this, args);
+                            inThrottle = true;
+                            setTimeout(() => inThrottle = false, limit);
+                        }
+                    };
+                }
+
+                _initParticles() {
+                    const baseParticleCount = Math.min(window.innerWidth, window.innerHeight);
+                    // Slightly fewer particles for cleaner look
+                    this.particleCount = Math.max(40, Math.min(100, baseParticleCount * 0.07));
+
+                    this.particles = [];
+                     const width = this.canvas.width / this.pixelRatio; // Use logical width/height for spawn
+                     const height = this.canvas.height / this.pixelRatio;
+                    for (let i = 0; i < this.particleCount; i++) {
+                        this.particles.push({
+                             // Spawn within logical coordinates then scale
+                            x: Math.random() * width * this.pixelRatio,
+                            y: Math.random() * height * this.pixelRatio,
+                            size: (Math.random() * 1 + 1) * this.pixelRatio, // Scale size
+                            speedX: (Math.random() - 0.5) * 0.4, // Slower speed
+                            speedY: (Math.random() - 0.5) * 0.4,
+                        });
+                    }
+                }
+
+                 // Method to be called by the theme switcher
+                updateColors(isDarkMode) {
+                    this.isDarkMode = isDarkMode;
+                }
+
+                _drawParticles() {
+                    const ctx = this.ctx;
+                    const canvasWidth = this.canvas.width;
+                    const canvasHeight = this.canvas.height;
+
+                    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+                    // Get current theme colors (ensure variables are defined in CSS)
+                    const nodeColor = getComputedStyle(document.documentElement).getPropertyValue('--node-color').trim() || 'rgba(0,0,0,0.2)';
+                    const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--line-color').trim() || 'rgba(0,0,0,0.08)';
+
+                    const maxConnectDistance = Math.min(130, Math.max(window.innerWidth, window.innerHeight) * 0.09) * this.pixelRatio;
+                    const maxConnectDistanceSq = maxConnectDistance * maxConnectDistance;
+
+                     // --- Begin Path for Lines (Performance) ---
+                    ctx.beginPath();
+                    ctx.lineWidth = 0.5 * this.pixelRatio; // Scale line width
+                    ctx.strokeStyle = lineColor;
+
+                    for (let i = 0; i < this.particles.length; i++) {
+                        const p1 = this.particles[i];
+
+                        // Update position
+                        p1.x += p1.speedX;
+                        p1.y += p1.speedY;
+
+                        // Boundary wrap (smoother than bounce)
+                        if (p1.x < -p1.size) p1.x = canvasWidth + p1.size;
+                        else if (p1.x > canvasWidth + p1.size) p1.x = -p1.size;
+                        if (p1.y < -p1.size) p1.y = canvasHeight + p1.size;
+                        else if (p1.y > canvasHeight + p1.size) p1.y = -p1.size;
+
+                         // Mouse repulsion
+                        if (this.mousePosition.x !== null) {
+                            const dx = p1.x - this.mousePosition.x * this.pixelRatio;
+                            const dy = p1.y - this.mousePosition.y * this.pixelRatio;
+                            const distSq = dx * dx + dy * dy;
+                            const mouseRadiusScaledSq = (this.mouseRadius * this.pixelRatio) ** 2;
+
+                            if (distSq < mouseRadiusScaledSq) {
+                                const distance = Math.sqrt(distSq);
+                                if (distance > 0) { // Avoid division by zero
+                                    const angle = Math.atan2(dy, dx);
+                                    const force = (Math.sqrt(mouseRadiusScaledSq) - distance) / Math.sqrt(mouseRadiusScaledSq);
+                                    const forceAmount = force * 2.5; // Adjust repulsion strength
+                                    p1.x += Math.cos(angle) * forceAmount;
+                                    p1.y += Math.sin(angle) * forceAmount;
+                                }
+                            }
+                        }
+
+                        // Check connections (only forward to avoid duplicates)
+                        for (let j = i + 1; j < this.particles.length; j++) {
+                            const p2 = this.particles[j];
+                            const dx = p1.x - p2.x;
+                            const dy = p1.y - p2.y;
+                            const distSq = dx * dx + dy * dy;
+
+                            if (distSq < maxConnectDistanceSq) {
+                                ctx.moveTo(p1.x, p1.y);
+                                ctx.lineTo(p2.x, p2.y);
+                            }
+                        }
+                    }
+                     // --- Stroke all lines at once ---
+                    ctx.stroke();
+
+
+                    // --- Draw Particles (on top of lines) ---
+                     ctx.fillStyle = nodeColor;
+                     for (let i = 0; i < this.particles.length; i++) {
+                         const p = this.particles[i];
+                         ctx.beginPath(); // Start new path for each circle
+                         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                         ctx.fill();
+                     }
+                }
+
+                animate() {
+                    if (this.paused) return;
+                    this._drawParticles();
+                    this.animationFrameId = requestAnimationFrame(() => this.animate());
+                }
+
+                _handleResize() {
+                    this.pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+                    this.canvas.width = window.innerWidth * this.pixelRatio;
+                    this.canvas.height = window.innerHeight * this.pixelRatio;
+                    this.canvas.style.width = window.innerWidth + 'px';
+                    this.canvas.style.height = window.innerHeight + 'px';
+                    // No need to scale context if coordinates/sizes are scaled by pixelRatio
+                    // this.ctx.scale(this.pixelRatio, this.pixelRatio); // Avoid scaling context
+
+                    this._initParticles(); // Recreate particles on resize
+                    if (!this.paused && !this.animationFrameId) {
+                        this.animate();
+                    } else if (!this.paused) {
+                         // If resizing while active, redraw immediately
+                         this._drawParticles();
+                    }
+                }
+
+                 _handleMouseMove(e) {
+                    this.mousePosition.x = e.clientX;
+                    this.mousePosition.y = e.clientY;
+                }
+
+                _handleTouchMove(e) {
+                    if (e.touches.length > 0) {
+                        this.mousePosition.x = e.touches[0].clientX;
+                        this.mousePosition.y = e.touches[0].clientY;
+                    }
+                }
+
+                _handleMouseLeave() {
+                    this.mousePosition.x = null;
+                    this.mousePosition.y = null;
+                }
+
+                _handleVisibilityChange() {
+                    if (document.hidden) {
+                        this.paused = true;
+                        if (this.animationFrameId) {
+                            cancelAnimationFrame(this.animationFrameId);
+                            this.animationFrameId = null;
+                        }
+                    } else {
+                        this.paused = false;
+                         // Don't restart if already running
+                        if (!this.animationFrameId) {
+                           this.animate();
+                        }
+                    }
+                }
+
+                destroy() {
+                    // Clean up listeners
+                    window.removeEventListener('resize', this.handleResize);
+                    document.removeEventListener('mousemove', this.handleMouseMove);
+                    // ... remove other listeners ...
+                     document.removeEventListener('visibilitychange', this._handleVisibilityChange.bind(this));
+                    if (this.animationFrameId) {
+                        cancelAnimationFrame(this.animationFrameId);
+                    }
+                }
+            }
+
+            // Initialize network animation if motion is not reduced
+            setTimeout(() => {
+                const canvas = document.getElementById('network-canvas');
+                if (canvas && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    window.networkAnimation = new NetworkAnimation(canvas);
+                } else if (canvas) {
+                     // canvas.style.display = 'none'; // Optionally hide if reduced motion
+                }
+            }, 200);
+
+        }); // End DOMContentLoaded
+    </script>
+</body>
+</html>

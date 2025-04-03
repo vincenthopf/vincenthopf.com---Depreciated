@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Modern Website (Single File)</title>
+    <title>Spatial Experience Demo</title>
 
     <!-- Embedded CSS Styles -->
     <style>
@@ -15,371 +15,380 @@
         }
 
         html {
-            scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             line-height: 1.6;
-            color: #333;
-            background-color: #fdfdfd;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        .site-header {
-            background-color: #ffffff;
-            padding: 1rem 0;
-            border-bottom: 1px solid #eee;
-            position: sticky; /* Make header sticky */
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow for sticky header */
-        }
-
-        .site-header .container {
-            display: flex;
-            justify-content: space-between;
+            color: #f0f0f0; /* Light text for dark/blurred background */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            background-color: #1a1a1d; /* Fallback background */
+            /* Ensure body takes at least viewport height */
+            min-height: 100vh;
+            display: flex; /* Use flexbox for centering the window */
+            justify-content: center;
             align-items: center;
+            padding: 5vh 5vw; /* Padding around the central window */
         }
 
-        .site-title {
-            font-size: 1.5rem;
-            color: #333;
-            text-decoration: none; /* Ensure title isn't underlined if it becomes a link */
+        /* Animated Gradient Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: linear-gradient(
+                135deg,
+                hsl(190, 50%, 55%),
+                hsl(220, 50%, 50%),
+                hsl(280, 40%, 50%),
+                hsl(340, 50%, 55%)
+            );
+            background-size: 400% 400%;
+            animation: gradientBG 25s ease infinite;
+            filter: blur(10px); /* Soften the background */
         }
 
-         .site-title:hover {
-             color: #007bff; /* Optional hover for title */
-         }
-
-        .site-nav ul {
-            list-style: none;
-            display: flex;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        .site-nav li {
-            margin-left: 20px;
+        /* Main Content Window */
+        .spatial-window {
+            width: 100%;
+            max-width: 850px; /* Limit max width */
+            background: rgba(30, 30, 40, 0.6); /* Darker translucent base */
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%); /* Safari */
+            border-radius: 30px; /* Generous rounding */
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle edge highlight */
+            padding: 45px 55px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25); /* Softer, deeper shadow */
+            position: relative;
+            z-index: 1;
+            overflow: hidden; /* Clip content to rounded corners */
+            animation: windowAppear 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Smooth appearance */
+            opacity: 0; /* Start hidden for animation */
+            transform: scale(0.95); /* Start slightly smaller */
+            /* Add scrollbars internally if needed */
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        .site-nav a {
-            text-decoration: none;
-            color: #555;
-            font-weight: bold;
-            transition: color 0.3s ease;
+        /* Custom scrollbar for the window */
+        .spatial-window::-webkit-scrollbar {
+            width: 8px;
+        }
+        .spatial-window::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .spatial-window::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .spatial-window::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
 
-        .site-nav a:hover,
-        .site-nav a:focus { /* Add focus style for accessibility */
-            color: #007bff; /* Accent color */
-            outline: 2px dashed #007bff; /* Basic focus indicator */
-             outline-offset: 2px;
+
+        @keyframes windowAppear {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
-        /* Main Content */
-        .site-main {
-             /* No top padding needed if header is sticky, content flows under */
+        /* Content Sections Styling */
+        .content-section {
+            padding: 2.5rem 0; /* Vertical spacing inside window */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator */
+            opacity: 0; /* Hidden for scroll animation */
+            transform: translateY(20px); /* Start slightly lower */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transition-delay: var(--animation-delay, 0s); /* Stagger animation */
         }
 
-        /* Hero Section */
-        .hero-section {
-            background-color: #e9f5ff; /* Light blue background */
-            color: #333;
+        .content-section:last-child {
+            border-bottom: none; /* Remove border from last section */
+             padding-bottom: 0; /* Reduce padding at the very bottom */
+        }
+
+        /* Trigger class for scroll animation */
+        .content-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Headings */
+        h2 {
             text-align: center;
-            padding: 5rem 0; /* Increased padding */
-             margin-top: 60px; /* Adjust based on header height if needed, or remove if main padding works */
-        }
-
-        .hero-section h2 {
-            font-size: 2.8rem; /* Slightly larger */
-            margin-bottom: 1rem;
+            font-size: 2.5rem; /* Larger, impactful */
             font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            letter-spacing: -0.5px;
         }
 
-        .hero-section p {
-            font-size: 1.2rem; /* Slightly larger */
-            margin-bottom: 2rem;
-            max-width: 600px; /* Constrain width */
+        h3 {
+             font-size: 1.4rem;
+             font-weight: 500;
+             color: #e0e0e0;
+             margin-bottom: 0.8rem;
+             letter-spacing: -0.2px;
+        }
+
+        /* Paragraph Text */
+        p {
+            font-size: 1.1rem;
+            color: #d0d0d0; /* Slightly less bright than pure white */
+            max-width: 650px; /* Improve readability */
             margin-left: auto;
             margin-right: auto;
+            text-align: center; /* Center align paragraphs by default */
+            margin-bottom: 1rem;
         }
 
+        /* Links */
+        a {
+            color: #87CEFA; /* Light Sky Blue - VisionOS often uses blues/cyans */
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        a:hover, a:focus {
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(135, 206, 250, 0.7); /* Glow effect */
+            outline: none; /* Remove default outline, rely on visual cue */
+        }
+
+        /* Hero Section Specifics */
+        #hero h2 {
+            font-size: 3.5rem; /* Even larger for hero */
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+             background: linear-gradient(90deg, #ffffff, #d0d0ff); /* Subtle gradient for main title */
+             -webkit-background-clip: text;
+             -webkit-text-fill-color: transparent;
+        }
+        #hero p {
+            font-size: 1.3rem;
+            color: #e5e5e5;
+            margin-bottom: 2rem;
+        }
+
+        /* CTA Button */
         .cta-button {
             display: inline-block;
-            background-color: #007bff; /* Accent color */
-            color: #fff;
-            padding: 14px 30px; /* Larger button */
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .cta-button:hover,
-        .cta-button:focus {
-            background-color: #0056b3; /* Darker accent */
-            transform: translateY(-2px); /* Slight lift effect */
-             outline: 2px solid #0056b3; /* Focus style */
-             outline-offset: 2px;
-        }
-
-        /* General Content Sections */
-        .content-section {
-            padding: 4rem 0; /* Increased padding */
-        }
-
-         /* Add unique IDs if you have multiple content sections for better targeting */
-         #about, #services, #contact {
-             scroll-margin-top: 80px; /* Adjust based on sticky header height for anchor links */
-         }
-
-        .content-section h2 {
-            text-align: center;
-            margin-bottom: 2.5rem; /* Increased spacing */
-            font-size: 2.2rem; /* Larger headings */
-            color: #444;
+            background: rgba(255, 255, 255, 0.2); /* Translucent white */
+            color: #ffffff;
+            padding: 14px 30px;
+            border-radius: 15px; /* Pill shape */
             font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
-        .bg-light {
-            background-color: #f8f9fa;
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
+        .cta-button:hover, .cta-button:focus {
+            background-color: rgba(255, 255, 255, 0.4); /* Brighter on hover */
+            transform: scale(1.05) translateY(-2px); /* Lift and scale */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            color: #ffffff; /* Ensure text color stays white */
+             text-shadow: none; /* Remove glow from link style */
+             outline: none;
         }
 
-        /* Service Grid Example */
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid, slightly larger min */
-            gap: 2rem; /* Increased gap */
-            margin-top: 2rem;
+        /* Services Section - Simplified List */
+        .service-list {
+            margin-top: 1.5rem;
+            text-align: left; /* Align service items left for better list readability */
         }
 
         .service-item {
-            background-color: #fff;
-            padding: 2rem; /* More padding */
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07); /* Slightly more shadow */
-             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.05); /* Very subtle background differentiation */
+            border-radius: 15px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-         .service-item:hover {
-             transform: translateY(-5px);
-             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-         }
+        .service-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02); /* Subtle scale on hover */
+        }
 
         .service-item h3 {
-            margin-bottom: 1rem; /* More space below heading */
-            color: #007bff;
-             font-size: 1.3rem;
+            color: #ffffff; /* Make service titles stand out more */
+            margin-bottom: 0.5rem;
         }
 
-         .service-item p {
-             font-size: 0.95rem;
-             color: #555;
-         }
+        .service-item p {
+            text-align: left; /* Align paragraph text left */
+            font-size: 1rem;
+            color: #c0c0c0;
+            margin-bottom: 0; /* Remove bottom margin within item */
+             max-width: none; /* Allow full width within item */
+        }
+
 
         /* Contact Section Specifics */
         #contact p {
-            text-align: center;
             font-size: 1.1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-         #contact a {
-             color: #007bff;
-             text-decoration: none;
-             font-weight: bold;
-         }
-         #contact a:hover {
-             text-decoration: underline;
-         }
-
-        /* Footer */
+        /* Footer inside the window */
         .site-footer {
-            background-color: #333;
-            color: #ccc;
             text-align: center;
-            padding: 2rem 0; /* Increased padding */
-            margin-top: 4rem; /* Increased margin */
+            padding-top: 2rem; /* Space above footer */
+            margin-top: 1rem; /* Ensure margin even if last section has less padding */
             font-size: 0.9rem;
-        }
-
-        .site-footer p {
-            margin: 0;
+            color: rgba(255, 255, 255, 0.5); /* Muted color */
+             border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separator line */
         }
 
         /* Responsive Adjustments */
         @media (max-width: 768px) {
-            .site-header .container {
-                flex-direction: column;
-                align-items: center;
-            }
-             .site-title {
-                 margin-bottom: 0.5rem; /* Add space below title on mobile */
+             body {
+                 padding: 3vh 3vw; /* Less padding on smaller screens */
+                 align-items: flex-start; /* Align window to top on mobile */
+                 min-height: 100vh; /* Ensure it still tries to fill height */
              }
-
-            .site-nav ul {
-                margin-top: 1rem;
-                padding-left: 0; /* Reset padding */
-                justify-content: center; /* Center nav items */
-                 flex-wrap: wrap; /* Allow wrapping if needed */
+            .spatial-window {
+                padding: 30px 35px;
+                border-radius: 25px;
+                max-height: 94vh; /* Allow more height usage */
+                 margin-top: 3vh; /* Add some top margin */
             }
-
-            .site-nav li {
-                 margin: 0 10px 10px 10px; /* Adjust spacing and add bottom margin */
-            }
-
-             /* Adjust scroll margin for smaller screens if header height changes */
-             #about, #services, #contact {
-                /* Might need adjustment if header is taller on mobile after items wrap */
-                scroll-margin-top: 120px; /* Example adjustment */
-             }
-
-            .hero-section {
-                 padding: 4rem 0;
-                  margin-top: 80px; /* Example adjustment if header height changed */
-             }
-
-            .hero-section h2 {
-                font-size: 2.2rem;
-            }
-             .hero-section p {
-                 font-size: 1.1rem;
-             }
-
-            .content-section h2 {
-                font-size: 1.9rem;
-            }
-
-             .service-grid {
-                 grid-template-columns: 1fr; /* Stack items on smaller screens */
-             }
+            h2 { font-size: 2rem; }
+            #hero h2 { font-size: 2.8rem; }
+            #hero p { font-size: 1.1rem; }
+            p { font-size: 1rem; }
+             .cta-button { padding: 12px 25px; font-size: 0.95rem; }
+             .service-item { padding: 1rem 1.5rem; }
         }
 
          @media (max-width: 480px) {
-             body {
-                 font-size: 15px; /* Slightly smaller base font for small devices */
+             .spatial-window {
+                 padding: 25px 20px;
+                 border-radius: 20px;
              }
-             .container {
-                 padding: 0 15px; /* Less horizontal padding */
-             }
-              .site-header {
-                  padding: 0.8rem 0;
-              }
-             .hero-section h2 {
-                font-size: 1.8rem;
-            }
-             .hero-section p {
-                 font-size: 1rem;
-             }
-             .cta-button {
-                 padding: 12px 25px;
-                 font-size: 0.9rem;
-             }
-             .content-section h2 {
-                 font-size: 1.7rem;
-             }
-             .site-footer {
-                 padding: 1.5rem 0;
-             }
+             h2 { font-size: 1.7rem; }
+             #hero h2 { font-size: 2.2rem; }
+             p { font-size: 0.95rem; }
+             .service-item h3 { font-size: 1.2rem; }
          }
 
     </style>
 </head>
 <body>
 
-    <header class="site-header">
-        <div class="container">
-            <!-- Make title a link to the top -->
-            <a href="#" class="site-title">My Website</a>
-            <nav class="site-nav">
-                <ul>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <!-- The main content lives inside this spatial window -->
+    <div class="spatial-window">
 
-    <main class="site-main">
-        <!-- Hero Section -->
-        <section id="hero" class="hero-section">
-            <div class="container">
-                <h2>Welcome!</h2>
-                <p>A clean, modern, single-page website template ready for content.</p>
-                <a href="#contact" class="cta-button">Get In Touch</a>
-            </div>
-        </section>
+        <main class="site-main">
+            <!-- Hero Section -->
+            <section id="hero" class="content-section">
+                <!-- No container needed, window provides it -->
+                <h2>Ethereal Interface</h2>
+                <p>Experience tranquility through fluid design and subtle motion.</p>
+                <a href="#contact" class="cta-button">Connect</a>
+            </section>
 
-        <!-- About Section -->
-        <section id="about" class="content-section">
-            <div class="container">
-                <h2>About Me / Project</h2>
-                <p style="text-align: center; max-width: 700px; margin-left: auto; margin-right: auto;">
-                    Replace this with compelling information about who you are, what this website is for, or the story behind your project. Highlight key strengths or unique selling points. Keep it focused and easy to read.
+            <!-- About Section -->
+            <section id="about" class="content-section">
+                <h2>The Vision</h2>
+                <p>
+                    This is a demonstration of spatial UI principles applied to the web. Focusing on depth, light, and material to create an interface that feels both advanced and calmingly natural. Like looking through a window into a digital space.
                 </p>
-            </div>
-        </section>
+            </section>
 
-        <!-- Services/Projects Section -->
-        <section id="services" class="content-section bg-light">
-            <div class="container">
-                <h2>Services / Portfolio</h2>
-                <div class="service-grid">
+            <!-- Services/Features Section -->
+            <section id="services" class="content-section">
+                <h2>Core Elements</h2>
+                <div class="service-list">
                     <div class="service-item">
-                        <h3>Feature / Item 1</h3>
-                        <p>Briefly describe a key service, project feature, or portfolio item here. Focus on the benefits or results.</p>
+                        <h3>Glassmorphism</h3>
+                        <p>Utilizing translucent, blurred backgrounds to establish hierarchy and context, mimicking frosted glass.</p>
                     </div>
                     <div class="service-item">
-                        <h3>Feature / Item 2</h3>
-                        <p>Another key point. Use consistent language and formatting across items.</p>
+                        <h3>Fluid Motion</h3>
+                        <p>Subtle, physics-inspired animations provide feedback and guide the eye without overwhelming the senses.</p>
                     </div>
                     <div class="service-item">
-                        <h3>Feature / Item 3</h3>
-                        <p>Showcase a third important aspect. Consider adding images or links later.</p>
+                        <h3>Harmonious Lighting</h3>
+                        <p>Soft shadows and highlights create a sense of depth, making elements feel tangible and layered in space.</p>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="content-section">
-            <div class="container">
-                <h2>Contact Information</h2>
-                <p>Interested in working together or have a question?</p>
+            <!-- Contact Section -->
+            <section id="contact" class="content-section">
+                <h2>Get In Touch</h2>
+                <p>Curious about this design or want to collaborate?</p>
                 <p>
-                    Reach out via Email: <a href="mailto:youremail@example.com">youremail@example.com</a>
+                    Send an Email: <a href="mailto:spatial-design@example.com">spatial-design@example.com</a>
                 </p>
-                <!-- Optional: Add links to social profiles like LinkedIn, GitHub, etc. -->
-                <!--
-                <p>
-                    Find me on <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer">LinkedIn</a> |
-                    <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer">GitHub</a>
-                </p>
-                -->
-            </div>
-        </section>
-    </main>
+            </section>
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; <span id="current-year"></span> Your Name / Company Name. All rights reserved.</p>
-        </div>
-    </footer>
+             <!-- Footer integrated into the window -->
+            <footer class="site-footer">
+                <p>&copy; <span id="current-year"></span> Spatial Demo. All rights reserved.</p>
+            </footer>
 
-    <!-- Basic script to update year dynamically -->
+        </main>
+
+    </div> <!-- End of spatial-window -->
+
+
+    <!-- JavaScript for dynamic year and scroll animations -->
     <script>
+        // Update copyright year
         document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Intersection Observer for scroll animations
+        const sections = document.querySelectorAll('.content-section');
+
+        const observerOptions = {
+            root: document.querySelector('.spatial-window'), // Observe within the scrolling window
+            rootMargin: '0px',
+            threshold: 0.1 // Trigger when 10% of the element is visible
+        };
+
+        const observerCallback = (entries, observer) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Add a staggered delay based on the element's index
+                    entry.target.style.setProperty('--animation-delay', `${index * 0.15}s`);
+                    entry.target.classList.add('is-visible');
+                    // Optional: Unobserve after animation to save resources
+                    // observer.unobserve(entry.target);
+                }
+                // Optional: Reset animation if element scrolls out of view
+                // else {
+                //     entry.target.classList.remove('is-visible');
+                // }
+            });
+        };
+
+        const intersectionObserver = new IntersectionObserver(observerCallback, observerOptions);
+
+        sections.forEach(section => {
+            intersectionObserver.observe(section);
+        });
+
     </script>
 
 </body>

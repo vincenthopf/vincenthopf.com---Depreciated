@@ -66,6 +66,11 @@
             justify-content: center;
         }
         
+        /* Icon wrapper for hover persistence */
+        .icon-wrapper {
+            position: relative;
+        }
+        
         .icon-item {
             text-align: center;
             cursor: pointer;
@@ -214,32 +219,63 @@
         }
         
         /* Footer */
+        .footer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        /* Carousel Dots */
+        .carousel-section {
+            position: relative;
+        }
+        
+        .carousel-dots {
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+        }
+        
+        .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #D1D5DB;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .dot:hover {
+            background: #9CA3AF;
+        }
+        
         .footer {
             position: relative;
-            margin-bottom: 20px;
         }
         
         .footer-text {
             font-size: 12px;
             color: #9CA3AF;
-            cursor: pointer;
         }
         
         .social-links {
             position: absolute;
             bottom: 100%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(10px);
             display: flex;
             gap: 16px;
             margin-bottom: 10px;
             opacity: 0;
             transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
         }
         
         .social-links.visible {
             opacity: 1;
-            transform: translateX(-50%) translateY(-5px);
+            transform: translateX(-50%) translateY(-10px);
+            pointer-events: auto;
         }
         
         .social-link {
@@ -268,26 +304,6 @@
         
         .social-link.threads {
             background: #000;
-        }
-        
-        /* Carousel Dots */
-        .carousel-dots {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 40px;
-        }
-        
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #D1D5DB;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        
-        .dot:hover {
-            background: #9CA3AF;
         }
         
         /* Detail Cards */
@@ -648,34 +664,140 @@
         <h1 class="main-heading">Welcome to my corner on the internet :)</h1>
         
         <div class="icon-grid">
-            <div class="icon-item" data-project="portal">
-                <div class="icon portal-icon"></div>
-                <div class="icon-label">Portal</div>
-            </div>
-            
-            <div class="icon-item" data-project="droppable">
-                <div class="icon droppable-icon"></div>
-                <div class="icon-label">Droppable</div>
-            </div>
-            
-            <div class="icon-item" data-project="appstacks">
-                <div class="icon app-stacks-icon">
-                    <div class="cube"></div>
-                    <div class="cube"></div>
-                    <div class="cube"></div>
-                    <div class="cube"></div>
-                    <div class="cube"></div>
-                    <div class="cube"></div>
-                    <div class="cube"></div>
-                    <div class="cube"></div>
-                    <div class="cube"></div>
+            <div class="icon-wrapper" data-project="portal">
+                <div class="icon-item">
+                    <div class="icon portal-icon"></div>
+                    <div class="icon-label">Portal</div>
                 </div>
-                <div class="icon-label">App Stacks</div>
+                <!-- Portal Detail Card -->
+                <div class="detail-card" id="portalCard">
+                    <div class="card-visuals">
+                        <div class="mockup mockup-left">
+                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Select Project type</div>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
+                                    <div style="font-size: 12px;">📊 Fixed price</div>
+                                </div>
+                                <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
+                                    <div style="font-size: 12px;">📅 Month rate</div>
+                                </div>
+                                <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
+                                    <div style="font-size: 12px;">🔄 Subscription</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mockup mockup-right">
+                            <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">0-1 Mobile app design for a food company app</div>
+                            <div style="font-size: 24px; font-weight: 700; color: #3B82F6; margin-bottom: 20px;">€1500</div>
+                            <button style="width: 100%; background: #3B82F6; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer;">Pay 1500€</button>
+                        </div>
+                    </div>
+                    <h3 class="card-title">Portal</h3>
+                    <p class="card-subtitle">A new way for creative freelancers to sell their services with finesse</p>
+                    <button class="card-button">View Portal</button>
+                </div>
             </div>
             
-            <div class="icon-item" data-project="collab">
-                <div class="icon collab-icon"></div>
-                <div class="icon-label">Collab with Roman</div>
+            <div class="icon-wrapper" data-project="droppable">
+                <div class="icon-item">
+                    <div class="icon droppable-icon"></div>
+                    <div class="icon-label">Droppable</div>
+                </div>
+                <!-- Droppable Detail Card -->
+                <div class="detail-card" id="droppableCard">
+                    <div class="card-visuals">
+                        <div class="mockup mockup-left" style="background: #1F2937; color: white;">
+                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Files</div>
+                            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                                <div>📁 Video assets.zip</div>
+                                <div>🖼️ Cover_bgr.png</div>
+                                <div>🎥 Demo_preview.mp4</div>
+                                <div>🎬 Animation_L.mp4</div>
+                            </div>
+                        </div>
+                        <div class="mockup mockup-right" style="background: #1F2937; color: white;">
+                            <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Send files</div>
+                            <div style="font-size: 14px; margin-bottom: 16px;">3 files, 186.8 MB available</div>
+                            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; margin-bottom: 20px;">
+                                <div>Team Pixawap</div>
+                                <div>John Johnson</div>
+                            </div>
+                            <button style="width: 100%; background: #10B981; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer;">Send</button>
+                        </div>
+                    </div>
+                    <h3 class="card-title">Droppable</h3>
+                    <p class="card-subtitle">Native macOS app for sharing large files</p>
+                    <button class="card-button">View Droppable</button>
+                </div>
+            </div>
+            
+            <div class="icon-wrapper" data-project="appstacks">
+                <div class="icon-item">
+                    <div class="icon app-stacks-icon">
+                        <div class="cube"></div>
+                        <div class="cube"></div>
+                        <div class="cube"></div>
+                        <div class="cube"></div>
+                        <div class="cube"></div>
+                        <div class="cube"></div>
+                        <div class="cube"></div>
+                        <div class="cube"></div>
+                        <div class="cube"></div>
+                    </div>
+                    <div class="icon-label">App Stacks</div>
+                </div>
+                <!-- App Stacks Detail Card -->
+                <div class="detail-card" id="appstacksCard">
+                    <div class="card-visuals">
+                        <div style="width: 400px; height: 250px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 30px; position: relative;">
+                            <h4 style="font-size: 18px; margin-bottom: 20px;">Discover whats under the hood of favorite apps</h4>
+                            <input type="text" placeholder="Search..." style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px; margin-bottom: 16px;">
+                            <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                                <span style="padding: 6px 12px; background: #EFF6FF; color: #3B82F6; border-radius: 6px; font-size: 12px;">AI</span>
+                                <span style="padding: 6px 12px; background: #F0FDF4; color: #10B981; border-radius: 6px; font-size: 12px;">Productivity</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div style="padding: 12px; background: #F9FAFB; border-radius: 8px;">
+                                    <div style="font-size: 14px; font-weight: 500;">Your Notes</div>
+                                </div>
+                                <div style="padding: 12px; background: #F9FAFB; border-radius: 8px;">
+                                    <div style="font-size: 14px; font-weight: 500;">Your Tasks</div>
+                                </div>
+                            </div>
+                            <!-- Floating icons -->
+                            <div style="position: absolute; top: -20px; right: -20px; width: 40px; height: 40px; background: #3B82F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">🔋</div>
+                            <div style="position: absolute; bottom: -20px; left: -20px; width: 40px; height: 40px; background: #F97316; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">&lt;/&gt;</div>
+                            <div style="position: absolute; top: 50%; right: -30px; width: 40px; height: 40px; background: #8B5CF6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🎨</div>
+                        </div>
+                    </div>
+                    <h3 class="card-title">App Stacks</h3>
+                    <p class="card-subtitle">Directory of the best designed apps, their tech stacks and makers behind them</p>
+                    <button class="card-button">View App Stacks</button>
+                </div>
+            </div>
+            
+            <div class="icon-wrapper" data-project="collab">
+                <div class="icon-item">
+                    <div class="icon collab-icon"></div>
+                    <div class="icon-label">Collab with Roman</div>
+                </div>
+                <!-- Collab Detail Card -->
+                <div class="detail-card" id="collabCard">
+                    <div class="card-visuals" style="height: 200px;">
+                        <div style="position: relative;">
+                            <div class="collab-photo"></div>
+                            <div class="sticker"></div>
+                            <!-- Stickers around photo -->
+                            <div style="position: absolute; top: -20px; left: -60px; background: #8B5CF6; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">Export to SVG</div>
+                            <div style="position: absolute; top: -20px; right: -80px; background: white; color: #8B5CF6; padding: 8px 16px; border-radius: 20px; font-size: 12px; border: 2px solid #8B5CF6;">Should designers code?</div>
+                            <div style="position: absolute; bottom: 20px; left: -70px; background: #8B5CF6; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">Detach component</div>
+                        </div>
+                    </div>
+                    <p style="font-family: 'Kalam', cursive; font-size: 18px; text-align: center; line-height: 1.4; margin-bottom: 24px;">
+                        Design is my bread and butter. Each idea deserves a unique design solution, and I'm here to help you with that.
+                    </p>
+                    <button class="card-button">View Design Services</button>
+                </div>
             </div>
         </div>
         
@@ -685,226 +807,22 @@
             through App Stacks, and collab with visionaries to bring even more ideas to life.
         </p>
         
-        <div class="footer">
-            <div class="social-links" id="socialLinks">
-                <a href="#" class="social-link reach-out">💬</a>
-                <a href="#" class="social-link twitter">𝕏</a>
-                <a href="#" class="social-link threads">@</a>
-            </div>
-            <div class="footer-text">All Right Reserved</div>
-        </div>
-        
-        <div class="carousel-dots">
-            <div class="dot" data-project="portal"></div>
-            <div class="dot" data-project="droppable"></div>
-            <div class="dot" data-project="appstacks"></div>
-        </div>
-    </div>
-    
-    <!-- Detail Cards -->
-    <div class="detail-card" id="portalCard">
-        <div class="card-visuals">
-            <div class="mockup mockup-left">
-                <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Select Project type</div>
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
-                        <div style="font-size: 12px;">📊 Fixed price</div>
-                    </div>
-                    <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
-                        <div style="font-size: 12px;">📅 Month rate</div>
-                    </div>
-                    <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
-                        <div style="font-size: 12px;">🔄 Subscription</div>
-                    </div>
+        <div class="footer-container">
+            <div class="carousel-section">
+                <div class="social-links" id="socialLinks">
+                    <a href="#" class="social-link reach-out">💬</a>
+                    <a href="#" class="social-link twitter">𝕏</a>
+                    <a href="#" class="social-link threads">@</a>
+                </div>
+                <div class="carousel-dots">
+                    <div class="dot" data-project="portal"></div>
+                    <div class="dot" data-project="droppable"></div>
+                    <div class="dot" data-project="appstacks"></div>
                 </div>
             </div>
-            <div class="mockup mockup-right">
-                <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">0-1 Mobile app design for a food company app</div>
-                <div style="font-size: 24px; font-weight: 700; color: #3B82F6; margin-bottom: 20px;">€1500</div>
-                <button style="width: 100%; background: #3B82F6; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer;">Pay 1500€</button>
+            <div class="footer">
+                <div class="footer-text">All Rights Reserved</div>
             </div>
-        </div>
-        <h3 class="card-title">Portal</h3>
-        <p class="card-subtitle">A new way for creative freelancers to sell their services with finesse</p>
-        <button class="card-button">View Portal</button>
-    </div>
-    
-    <div class="detail-card" id="droppableCard">
-        <div class="card-visuals">
-            <div class="mockup mockup-left" style="background: #1F2937; color: white;">
-                <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Files</div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
-                    <div>📁 Video assets.zip</div>
-                    <div>🖼️ Cover_bgr.png</div>
-                    <div>🎥 Demo_preview.mp4</div>
-                    <div>🎬 Animation_L.mp4</div>
-                </div>
-            </div>
-            <div class="mockup mockup-right" style="background: #1F2937; color: white;">
-                <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Send files</div>
-                <div style="font-size: 14px; margin-bottom: 16px;">3 files, 186.8 MB available</div>
-                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; margin-bottom: 20px;">
-                    <div>Team Pixawap</div>
-                    <div>John Johnson</div>
-                </div>
-                <button style="width: 100%; background: #10B981; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer;">Send</button>
-            </div>
-        </div>
-        <h3 class="card-title">Droppable</h3>
-        <p class="card-subtitle">Native macOS app for sharing large files</p>
-        <button class="card-button">View Droppable</button>
-    </div>
-    
-    <div class="detail-card" id="appstacksCard">
-        <div class="card-visuals">
-            <div style="width: 400px; height: 250px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 30px; position: relative;">
-                <h4 style="font-size: 18px; margin-bottom: 20px;">Discover whats under the hood of favorite apps</h4>
-                <input type="text" placeholder="Search..." style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px; margin-bottom: 16px;">
-                <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-                    <span style="padding: 6px 12px; background: #EFF6FF; color: #3B82F6; border-radius: 6px; font-size: 12px;">AI</span>
-                    <span style="padding: 6px 12px; background: #F0FDF4; color: #10B981; border-radius: 6px; font-size: 12px;">Productivity</span>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div style="padding: 12px; background: #F9FAFB; border-radius: 8px;">
-                        <div style="font-size: 14px; font-weight: 500;">Your Notes</div>
-                    </div>
-                    <div style="padding: 12px; background: #F9FAFB; border-radius: 8px;">
-                        <div style="font-size: 14px; font-weight: 500;">Your Tasks</div>
-                    </div>
-                </div>
-                <!-- Floating icons -->
-                <div style="position: absolute; top: -20px; right: -20px; width: 40px; height: 40px; background: #3B82F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">🔋</div>
-                <div style="position: absolute; bottom: -20px; left: -20px; width: 40px; height: 40px; background: #F97316; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">&lt;/&gt;</div>
-                <div style="position: absolute; top: 50%; right: -30px; width: 40px; height: 40px; background: #8B5CF6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🎨</div>
-            </div>
-        </div>
-        <h3 class="card-title">App Stacks</h3>
-        <p class="card-subtitle">Directory of the best designed apps, their tech stacks and makers behind them</p>
-        <button class="card-button">View App Stacks</button>
-    </div>
-    
-    <div class="detail-card" id="collabCard">
-        <div class="card-visuals" style="height: 200px;">
-            <div style="position: relative;">
-                <div class="collab-photo"></div>
-                <div class="sticker"></div>
-                <!-- Stickers around photo -->
-                <div style="position: absolute; top: -20px; left: -60px; background: #8B5CF6; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">Export to SVG</div>
-                <div style="position: absolute; top: -20px; right: -80px; background: white; color: #8B5CF6; padding: 8px 16px; border-radius: 20px; font-size: 12px; border: 2px solid #8B5CF6;">Should designers code?</div>
-                <div style="position: absolute; bottom: 20px; left: -70px; background: #8B5CF6; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">Detach component</div>
-            </div>
-        </div>
-        <p style="font-family: 'Kalam', cursive; font-size: 18px; text-align: center; line-height: 1.4; margin-bottom: 24px;">
-            Design is my bread and butter. Each idea deserves a unique design solution, and I'm here to help you with that.
-        </p>
-        <button class="card-button">View Design Services</button>
-    </div>
-    
-    <!-- Collab Modal -->
-    <div class="collab-modal" id="collabModal">
-        <div class="close-button" onclick="closeCollabModal()">✕</div>
-        
-        <div class="collab-content">
-            <div class="collab-header">
-                <div style="position: relative; display: inline-block;">
-                    <div class="collab-photo"></div>
-                    <div class="sticker"></div>
-                </div>
-                <p class="collab-intro">
-                    I'm Roman. I design things that serve a purpose and evoke delight. 
-                    I simplify the complex, craft memorability, and build experiences that last.
-                </p>
-                <div class="button-group">
-                    <button class="primary-button">Reach out</button>
-                    <button class="secondary-button">Book a call</button>
-                </div>
-            </div>
-            
-            <div class="featured-project">
-                <div class="project-image"></div>
-                <p class="project-caption">Portal - Client view of a freelance project</p>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-heading">Product design with intention, user-centricity, and scalability in mind</h2>
-                <p class="section-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="section-text">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </div>
-            
-            <div class="content-section">
-                <h2 class="section-heading">The only requirement is awesomeness - at the idea, redesign, or reinvention stage</h2>
-                <p class="section-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="section-text">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </div>
-            
-            <div class="services-list">
-                <div class="service-item">
-                    <div class="service-icon blue"></div>
-                    <h3 class="service-title">Product Design</h3>
-                    <p class="service-subtitle">0 -> 1 Product Design for Web, Mobile, Desktop platforms</p>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon orange"></div>
-                    <h3 class="service-title">Website Design</h3>
-                    <p class="service-subtitle">Website design & development in Framer or Webflow</p>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon green"></div>
-                    <h3 class="service-title">Custom Iconography & UI Illustration</h3>
-                    <p class="service-subtitle">Including Rive or SVG animation</p>
-                </div>
-            </div>
-            
-            <button class="cta-button">Tell me about your project...</button>
-            
-            <div class="content-section">
-                <p class="section-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="section-text">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-                <p class="section-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <p class="section-text">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </div>
-            
-            <div class="final-cta">
-                <div class="calendar-icon"></div>
-                <h2 class="section-heading">Let's build something awesome together</h2>
-                <p class="section-text">
-                    I'm excited to hear about what you're building. Reach out below to get the ball rolling, 
-                    and potentially build something really special together.
-                </p>
-                <div class="button-group">
-                    <button class="primary-button">Reach out</button>
-                    <button class="secondary-button">Book a call</button>
-                </div>
-            </div>
-            
-            <p class="location-text">
-                I'm located in Berlin, Germany timezone (CET). I'll get back to you as soon as I can.
-            </p>
-            <p class="signature">Cheers, Roman Tesluk</p>
         </div>
     </div>
     
@@ -912,21 +830,13 @@
         // Elements
         const mainHeading = document.querySelector('.main-heading');
         const introText = document.querySelector('.intro-text');
+        const iconWrappers = document.querySelectorAll('.icon-wrapper');
         const iconItems = document.querySelectorAll('.icon-item');
         const dots = document.querySelectorAll('.dot');
-        const footer = document.querySelector('.footer');
+        const carouselSection = document.querySelector('.carousel-section');
         const socialLinks = document.getElementById('socialLinks');
-        const footerText = document.querySelector('.footer-text');
         const collabModal = document.getElementById('collabModal');
         const mainContainer = document.getElementById('mainContainer');
-        
-        // Detail cards
-        const detailCards = {
-            portal: document.getElementById('portalCard'),
-            droppable: document.getElementById('droppableCard'),
-            appstacks: document.getElementById('appstacksCard'),
-            collab: document.getElementById('collabCard')
-        };
         
         let currentFocusedItem = null;
         
@@ -942,21 +852,27 @@
             
             currentFocusedItem = projectName;
             
+            // Find the wrapper for this project
+            const activeWrapper = document.querySelector(`.icon-wrapper[data-project="${projectName}"]`);
+            
             // Blur other items and text
-            iconItems.forEach(item => {
-                if (item.dataset.project === projectName) {
-                    item.classList.add('focused');
+            iconWrappers.forEach(wrapper => {
+                if (wrapper.dataset.project === projectName) {
+                    wrapper.querySelector('.icon-item').classList.add('focused');
                 } else {
-                    item.classList.add('blurred');
+                    wrapper.querySelector('.icon-item').classList.add('blurred');
                 }
             });
             
             mainHeading.classList.add('blurred-bg');
             introText.classList.add('blurred-bg');
             
-            // Show detail card
-            if (detailCards[projectName]) {
-                detailCards[projectName].classList.add('visible');
+            // Show detail card within the active wrapper
+            if (activeWrapper) {
+                const detailCard = activeWrapper.querySelector('.detail-card');
+                if (detailCard) {
+                    detailCard.classList.add('visible');
+                }
             }
         }
         
@@ -971,37 +887,20 @@
             introText.classList.remove('blurred-bg');
             
             // Hide all detail cards
-            Object.values(detailCards).forEach(card => {
+            document.querySelectorAll('.detail-card').forEach(card => {
                 card.classList.remove('visible');
             });
         }
         
-        // Icon hover events
-        iconItems.forEach(item => {
-            item.addEventListener('mouseenter', () => {
-                focusItem(item.dataset.project);
+        // Icon wrapper hover events
+        iconWrappers.forEach(wrapper => {
+            wrapper.addEventListener('mouseenter', () => {
+                focusItem(wrapper.dataset.project);
             });
-        });
-        
-        // Unfocus when mouse leaves the icon grid area
-        document.addEventListener('mousemove', (e) => {
-            const iconGrid = document.querySelector('.icon-grid');
-            const detailCardVisible = Object.values(detailCards).some(card => card.classList.contains('visible'));
             
-            if (detailCardVisible) {
-                const rect = iconGrid.getBoundingClientRect();
-                const expandedRect = {
-                    top: rect.top - 300,
-                    bottom: rect.bottom + 100,
-                    left: rect.left - 100,
-                    right: rect.right + 100
-                };
-                
-                if (e.clientX < expandedRect.left || e.clientX > expandedRect.right ||
-                    e.clientY < expandedRect.top || e.clientY > expandedRect.bottom) {
-                    unfocusAll();
-                }
-            }
+            wrapper.addEventListener('mouseleave', () => {
+                unfocusAll();
+            });
         });
         
         // Carousel dots
@@ -1011,19 +910,19 @@
             });
         });
         
-        // Footer social links
-        footerText.addEventListener('mouseenter', () => {
+        // Footer carousel section hover for social links
+        carouselSection.addEventListener('mouseenter', () => {
             socialLinks.classList.add('visible');
         });
         
-        footer.addEventListener('mouseleave', () => {
+        carouselSection.addEventListener('mouseleave', () => {
             socialLinks.classList.remove('visible');
         });
         
         // Collab modal
-        iconItems.forEach(item => {
-            if (item.dataset.project === 'collab') {
-                item.addEventListener('click', () => {
+        iconWrappers.forEach(wrapper => {
+            if (wrapper.dataset.project === 'collab') {
+                wrapper.querySelector('.icon-item').addEventListener('click', () => {
                     openCollabModal();
                 });
             }

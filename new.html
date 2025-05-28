@@ -29,9 +29,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: radial-gradient(circle, #E5E5E5 1px, transparent 1px);
+            background-image: radial-gradient(circle, #D1D5DB 1.5px, transparent 1.5px);
             background-size: 20px 20px;
-            opacity: 0.5;
+            opacity: 0.8;
             pointer-events: none;
         }
         
@@ -226,15 +226,16 @@
             gap: 20px;
         }
         
-        /* Carousel Dots */
+        /* Carousel Section - Wrapper for dots and social icons */
         .carousel-section {
             position: relative;
+            padding: 20px 40px;
         }
         
         .carousel-dots {
             display: flex;
             gap: 12px;
-            padding: 10px;
+            justify-content: center;
         }
         
         .dot {
@@ -313,7 +314,8 @@
             border-radius: 24px;
             padding: 40px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            width: 750px;
+            max-width: 40vw;
             opacity: 0;
             transform: scale(0.9) translateY(20px);
             pointer-events: none;
@@ -332,7 +334,7 @@
         
         .card-visuals {
             margin-bottom: 24px;
-            height: 300px;
+            height: 350px;
             position: relative;
             display: flex;
             align-items: center;
@@ -348,16 +350,16 @@
         }
         
         .mockup-left {
-            width: 200px;
-            height: 280px;
-            transform: rotate(-5deg) translateX(-20px);
+            width: 260px;
+            height: 320px;
+            transform: rotate(-5deg) translateX(-40px);
             z-index: 1;
         }
         
         .mockup-right {
-            width: 220px;
-            height: 300px;
-            transform: rotate(5deg) translateX(20px);
+            width: 280px;
+            height: 340px;
+            transform: rotate(5deg) translateX(40px);
             z-index: 2;
         }
         
@@ -673,23 +675,23 @@
                 <div class="detail-card" id="portalCard">
                     <div class="card-visuals">
                         <div class="mockup mockup-left">
-                            <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Select Project type</div>
-                            <div style="display: flex; flex-direction: column; gap: 12px;">
-                                <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
-                                    <div style="font-size: 12px;">📊 Fixed price</div>
+                            <div style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">Select Project type</div>
+                            <div style="display: flex; flex-direction: column; gap: 14px;">
+                                <div style="padding: 16px; background: #F3F4F6; border-radius: 8px;">
+                                    <div style="font-size: 14px;">📊 Fixed price</div>
                                 </div>
-                                <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
-                                    <div style="font-size: 12px;">📅 Month rate</div>
+                                <div style="padding: 16px; background: #F3F4F6; border-radius: 8px;">
+                                    <div style="font-size: 14px;">📅 Month rate</div>
                                 </div>
-                                <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
-                                    <div style="font-size: 12px;">🔄 Subscription</div>
+                                <div style="padding: 16px; background: #F3F4F6; border-radius: 8px;">
+                                    <div style="font-size: 14px;">🔄 Subscription</div>
                                 </div>
                             </div>
                         </div>
                         <div class="mockup mockup-right">
-                            <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">0-1 Mobile app design for a food company app</div>
-                            <div style="font-size: 24px; font-weight: 700; color: #3B82F6; margin-bottom: 20px;">€1500</div>
-                            <button style="width: 100%; background: #3B82F6; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer;">Pay 1500€</button>
+                            <div style="font-size: 18px; font-weight: 600; margin-bottom: 20px;">0-1 Mobile app design for a food company app</div>
+                            <div style="font-size: 28px; font-weight: 700; color: #3B82F6; margin-bottom: 24px;">€1500</div>
+                            <button style="width: 100%; background: #3B82F6; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 500; cursor: pointer; font-size: 16px;">Pay 1500€</button>
                         </div>
                     </div>
                     <h3 class="card-title">Portal</h3>
@@ -749,7 +751,7 @@
                 <!-- App Stacks Detail Card -->
                 <div class="detail-card" id="appstacksCard">
                     <div class="card-visuals">
-                        <div style="width: 400px; height: 250px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 30px; position: relative;">
+                        <div style="width: 500px; height: 300px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 30px; position: relative;">
                             <h4 style="font-size: 18px; margin-bottom: 20px;">Discover whats under the hood of favorite apps</h4>
                             <input type="text" placeholder="Search..." style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px; margin-bottom: 16px;">
                             <div style="display: flex; gap: 8px; margin-bottom: 20px;">
@@ -857,15 +859,18 @@
             
             // Blur other items and text
             iconWrappers.forEach(wrapper => {
-                if (wrapper.dataset.project === projectName) {
-                    wrapper.querySelector('.icon-item').classList.add('focused');
-                } else {
-                    wrapper.querySelector('.icon-item').classList.add('blurred');
+                const item = wrapper.querySelector('.icon-item');
+                if (item) {
+                    if (wrapper.dataset.project === projectName) {
+                        item.classList.add('focused');
+                    } else {
+                        item.classList.add('blurred');
+                    }
                 }
             });
             
-            mainHeading.classList.add('blurred-bg');
-            introText.classList.add('blurred-bg');
+            if (mainHeading) mainHeading.classList.add('blurred-bg');
+            if (introText) introText.classList.add('blurred-bg');
             
             // Show detail card within the active wrapper
             if (activeWrapper) {
@@ -880,68 +885,96 @@
             currentFocusedItem = null;
             
             iconItems.forEach(item => {
-                item.classList.remove('focused', 'blurred');
+                if (item) {
+                    item.classList.remove('focused', 'blurred');
+                }
             });
             
-            mainHeading.classList.remove('blurred-bg');
-            introText.classList.remove('blurred-bg');
+            if (mainHeading) mainHeading.classList.remove('blurred-bg');
+            if (introText) introText.classList.remove('blurred-bg');
             
             // Hide all detail cards
             document.querySelectorAll('.detail-card').forEach(card => {
-                card.classList.remove('visible');
+                if (card) card.classList.remove('visible');
             });
         }
         
         // Icon wrapper hover events
         iconWrappers.forEach(wrapper => {
-            wrapper.addEventListener('mouseenter', () => {
-                focusItem(wrapper.dataset.project);
-            });
-            
-            wrapper.addEventListener('mouseleave', () => {
-                unfocusAll();
-            });
-        });
-        
-        // Carousel dots
-        dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                focusItem(dot.dataset.project);
-            });
-        });
-        
-        // Footer carousel section hover for social links
-        carouselSection.addEventListener('mouseenter', () => {
-            socialLinks.classList.add('visible');
-        });
-        
-        carouselSection.addEventListener('mouseleave', () => {
-            socialLinks.classList.remove('visible');
-        });
-        
-        // Collab modal
-        iconWrappers.forEach(wrapper => {
-            if (wrapper.dataset.project === 'collab') {
-                wrapper.querySelector('.icon-item').addEventListener('click', () => {
-                    openCollabModal();
+            if (wrapper) {
+                wrapper.addEventListener('mouseenter', () => {
+                    focusItem(wrapper.dataset.project);
+                });
+                
+                wrapper.addEventListener('mouseleave', () => {
+                    unfocusAll();
                 });
             }
         });
         
-        // Also open modal when clicking the detail card button
-        document.querySelector('#collabCard .card-button').addEventListener('click', () => {
-            openCollabModal();
+        // Carousel dots
+        dots.forEach(dot => {
+            if (dot) {
+                dot.addEventListener('click', () => {
+                    focusItem(dot.dataset.project);
+                });
+            }
         });
         
+        // Footer carousel section hover for social links
+        if (carouselSection && socialLinks) {
+            carouselSection.addEventListener('mouseenter', () => {
+                socialLinks.classList.add('visible');
+            });
+            
+            carouselSection.addEventListener('mouseleave', () => {
+                socialLinks.classList.remove('visible');
+            });
+        }
+        
+        // Collab modal
+        iconWrappers.forEach(wrapper => {
+            if (wrapper && wrapper.dataset.project === 'collab') {
+                const iconItem = wrapper.querySelector('.icon-item');
+                if (iconItem) {
+                    iconItem.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openCollabModal();
+                    });
+                }
+            }
+        });
+        
+        // Also open modal when clicking the detail card button
+        const collabButton = document.querySelector('#collabCard .card-button');
+        if (collabButton) {
+            collabButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                openCollabModal();
+            });
+        }
+        
+        // Close button event
+        const closeBtn = document.getElementById('closeCollabBtn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeCollabModal);
+        }
+        
         function openCollabModal() {
+            if (!collabModal || !mainContainer) return;
+            
             mainContainer.style.opacity = '0';
             setTimeout(() => {
                 collabModal.classList.add('visible');
+                document.body.style.overflow = 'hidden';
             }, 300);
         }
         
         function closeCollabModal() {
+            if (!collabModal || !mainContainer) return;
+            
             collabModal.classList.remove('visible');
+            document.body.style.overflow = 'auto';
             setTimeout(() => {
                 mainContainer.style.opacity = '1';
             }, 300);

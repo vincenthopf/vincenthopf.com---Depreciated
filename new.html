@@ -33,20 +33,22 @@
             background-size: 20px 20px;
             opacity: 0.8;
             pointer-events: none;
-            -webkit-mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                rgba(0, 0, 0, 0.2) 15%, 
-                rgba(0, 0, 0, 1) 35%, 
-                rgba(0, 0, 0, 1) 65%, 
-                rgba(0, 0, 0, 0.2) 85%, 
-                transparent 100%);
-            mask-image: linear-gradient(to bottom, 
-                transparent 0%, 
-                rgba(0, 0, 0, 0.2) 15%, 
-                rgba(0, 0, 0, 1) 35%, 
-                rgba(0, 0, 0, 1) 65%, 
-                rgba(0, 0, 0, 0.2) 85%, 
-                transparent 100%);
+            -webkit-mask-image: 
+                radial-gradient(
+                    ellipse 70% 50% at center,
+                    rgba(0, 0, 0, 1) 0%,
+                    rgba(0, 0, 0, 0.8) 40%,
+                    rgba(0, 0, 0, 0.3) 70%,
+                    transparent 100%
+                );
+            mask-image: 
+                radial-gradient(
+                    ellipse 70% 50% at center,
+                    rgba(0, 0, 0, 1) 0%,
+                    rgba(0, 0, 0, 0.8) 40%,
+                    rgba(0, 0, 0, 0.3) 70%,
+                    transparent 100%
+                );
         }
         
         /* Main Container */
@@ -90,6 +92,9 @@
             cursor: pointer;
             transition: all 0.4s ease-in-out;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .icon-item.blurred {
@@ -215,10 +220,16 @@
         }
         
         .icon-label {
-            font-size: 14px;
-            color: #4B5563;
+            font-size: 13px;
+            color: #374151;
             font-weight: 500;
-            transition: filter 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            background-color: #E5E7EB;
+            padding: 5px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            line-height: 1.2;
+            transition: all 0.4s ease-in-out;
+            white-space: nowrap;
         }
         
         /* Intro Text */

@@ -277,7 +277,7 @@
         }
         
         .footer {
-            position: relative;
+            text-align: center;
         }
         
         .footer-text {
@@ -835,7 +835,7 @@
         </p>
         
         <div class="footer-container">
-            <div class="carousel-section">
+            <div class="social-trigger-wrapper">
                 <div class="social-links" id="socialLinks">
                     <a href="#" class="social-link reach-out">💬</a>
                     <a href="#" class="social-link twitter">𝕏</a>
@@ -860,8 +860,6 @@
         const iconWrappers = document.querySelectorAll('.icon-wrapper');
         const iconItems = document.querySelectorAll('.icon-item');
         const dots = document.querySelectorAll('.dot');
-        const carouselSection = document.querySelector('.carousel-section');
-        const socialLinks = document.getElementById('socialLinks');
         const collabModal = document.getElementById('collabModal');
         const mainContainer = document.getElementById('mainContainer');
         
@@ -945,17 +943,6 @@
                 });
             }
         });
-        
-        // Footer carousel section hover for social links
-        if (carouselSection && socialLinks) {
-            carouselSection.addEventListener('mouseenter', () => {
-                socialLinks.classList.add('visible');
-            });
-            
-            carouselSection.addEventListener('mouseleave', () => {
-                socialLinks.classList.remove('visible');
-            });
-        }
         
         // Collab modal
         iconWrappers.forEach(wrapper => {

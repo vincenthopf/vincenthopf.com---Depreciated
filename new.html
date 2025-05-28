@@ -3,393 +3,1050 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spatial Experience Demo</title>
-
-    <!-- Embedded CSS Styles -->
+    <title>Roman - Product Designer</title>
     <style>
-        /* Basic Reset & Defaults */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Kalam:wght@700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-            line-height: 1.6;
-            color: #f0f0f0; /* Light text for dark/blurred background */
-            overflow-x: hidden; /* Prevent horizontal scroll */
-            background-color: #1a1a1d; /* Fallback background */
-            /* Ensure body takes at least viewport height */
+            font-family: 'Inter', sans-serif;
+            background-color: #F7F7F7;
+            overflow-x: hidden;
+            position: relative;
             min-height: 100vh;
-            display: flex; /* Use flexbox for centering the window */
-            justify-content: center;
-            align-items: center;
-            padding: 5vh 5vw; /* Padding around the central window */
         }
-
-        /* Animated Gradient Background */
+        
+        /* Background Pattern */
         body::before {
             content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient(circle, #E5E5E5 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        /* Main Container */
+        .main-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        /* Main Heading */
+        .main-heading {
+            font-family: 'Kalam', cursive;
+            font-size: 36px;
+            color: #2D2D2D;
+            text-align: center;
+            margin-bottom: 60px;
+            transition: filter 0.4s ease-in-out, opacity 0.4s ease-in-out;
+        }
+        
+        /* Icon Grid */
+        .icon-grid {
+            display: flex;
+            gap: 80px;
+            margin-bottom: 60px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .icon-item {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease-in-out;
+            position: relative;
+        }
+        
+        .icon-item.blurred {
+            filter: blur(4px);
+            opacity: 0.5;
+        }
+        
+        .icon-item.focused {
+            transform: scale(1.08);
+        }
+        
+        .icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        
+        .icon:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Portal Icon */
+        .portal-icon {
+            background: #3B82F6;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .portal-icon::after {
+            content: '✦';
+            color: white;
+            font-size: 40px;
+        }
+        
+        /* Droppable Icon */
+        .droppable-icon {
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(90deg, white 50%, #22C55E 50%);
+        }
+        
+        .droppable-icon::before {
+            content: '• •';
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            letter-spacing: 20px;
+        }
+        
+        .droppable-icon::after {
+            content: '';
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 20px;
+            border: 3px solid black;
+            border-top: none;
+            border-radius: 0 0 40px 40px;
+        }
+        
+        /* App Stacks Icon */
+        .app-stacks-icon {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2px;
+            padding: 10px;
+            transform: rotate(-15deg);
+        }
+        
+        .cube {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .cube:nth-child(1) { background: #3B82F6; }
+        .cube:nth-child(2) { background: #10B981; }
+        .cube:nth-child(3) { background: #F59E0B; }
+        .cube:nth-child(4) { background: #EC4899; }
+        .cube:nth-child(5) { background: #06B6D4; }
+        .cube:nth-child(6) { background: #8B5CF6; }
+        .cube:nth-child(7) { background: #EF4444; }
+        .cube:nth-child(8) { background: #14B8A6; }
+        .cube:nth-child(9) { background: #F97316; }
+        
+        /* Collab Icon */
+        .collab-icon {
+            border-radius: 50%;
+            background: #4B5563;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .collab-icon::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 35px;
+            background: #1F2937;
+            border-radius: 50% 50% 0 0;
+        }
+        
+        .collab-icon::before {
+            content: '👤';
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+        }
+        
+        .icon-label {
+            font-size: 14px;
+            color: #4B5563;
+            font-weight: 500;
+            transition: filter 0.4s ease-in-out, opacity 0.4s ease-in-out;
+        }
+        
+        /* Intro Text */
+        .intro-text {
+            max-width: 800px;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #4B5563;
+            margin-bottom: 40px;
+            transition: filter 0.4s ease-in-out, opacity 0.4s ease-in-out;
+        }
+        
+        /* Footer */
+        .footer {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .footer-text {
+            font-size: 12px;
+            color: #9CA3AF;
+            cursor: pointer;
+        }
+        
+        .social-links {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .social-links.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+        
+        .social-link:hover {
+            transform: scale(1.1);
+        }
+        
+        .social-link.reach-out {
+            background: #3B82F6;
+        }
+        
+        .social-link.twitter {
+            background: #000;
+        }
+        
+        .social-link.threads {
+            background: #000;
+        }
+        
+        /* Carousel Dots */
+        .carousel-dots {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 40px;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #D1D5DB;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .dot:hover {
+            background: #9CA3AF;
+        }
+        
+        /* Detail Cards */
+        .detail-card {
+            position: absolute;
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            opacity: 0;
+            transform: scale(0.9) translateY(20px);
+            pointer-events: none;
+            transition: all 0.4s ease-in-out;
+            z-index: 100;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+        }
+        
+        .detail-card.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+        
+        .card-visuals {
+            margin-bottom: 24px;
+            height: 300px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mockup {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            padding: 20px;
+        }
+        
+        .mockup-left {
+            width: 200px;
+            height: 280px;
+            transform: rotate(-5deg) translateX(-20px);
+            z-index: 1;
+        }
+        
+        .mockup-right {
+            width: 220px;
+            height: 300px;
+            transform: rotate(5deg) translateX(20px);
+            z-index: 2;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1F2937;
+        }
+        
+        .card-subtitle {
+            font-size: 16px;
+            color: #6B7280;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .card-button {
+            background: #E5E7EB;
+            color: #1F2937;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .card-button:hover {
+            background: #D1D5DB;
+            transform: translateY(-1px);
+        }
+        
+        /* Collab Modal */
+        .collab-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            z-index: -1;
-            background: linear-gradient(
-                135deg,
-                hsl(190, 50%, 55%),
-                hsl(220, 50%, 50%),
-                hsl(280, 40%, 50%),
-                hsl(340, 50%, 55%)
-            );
-            background-size: 400% 400%;
-            animation: gradientBG 25s ease infinite;
-            filter: blur(10px); /* Soften the background */
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Main Content Window */
-        .spatial-window {
-            width: 100%;
-            max-width: 850px; /* Limit max width */
-            background: rgba(30, 30, 40, 0.6); /* Darker translucent base */
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%); /* Safari */
-            border-radius: 30px; /* Generous rounding */
-            border: 1px solid rgba(255, 255, 255, 0.15); /* Subtle edge highlight */
-            padding: 45px 55px;
-            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25); /* Softer, deeper shadow */
-            position: relative;
-            z-index: 1;
-            overflow: hidden; /* Clip content to rounded corners */
-            animation: windowAppear 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Smooth appearance */
-            opacity: 0; /* Start hidden for animation */
-            transform: scale(0.95); /* Start slightly smaller */
-            /* Add scrollbars internally if needed */
-            max-height: 90vh;
+            background: #F7F7F7;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
             overflow-y: auto;
         }
-
-        /* Custom scrollbar for the window */
-        .spatial-window::-webkit-scrollbar {
-            width: 8px;
-        }
-        .spatial-window::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-        .spatial-window::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .spatial-window::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-
-        @keyframes windowAppear {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Content Sections Styling */
-        .content-section {
-            padding: 2.5rem 0; /* Vertical spacing inside window */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle separator */
-            opacity: 0; /* Hidden for scroll animation */
-            transform: translateY(20px); /* Start slightly lower */
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-            transition-delay: var(--animation-delay, 0s); /* Stagger animation */
-        }
-
-        .content-section:last-child {
-            border-bottom: none; /* Remove border from last section */
-             padding-bottom: 0; /* Reduce padding at the very bottom */
-        }
-
-        /* Trigger class for scroll animation */
-        .content-section.is-visible {
+        
+        .collab-modal.visible {
             opacity: 1;
-            transform: translateY(0);
+            pointer-events: auto;
         }
-
-        /* Headings */
-        h2 {
-            text-align: center;
-            font-size: 2.5rem; /* Larger, impactful */
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-        }
-
-        h3 {
-             font-size: 1.4rem;
-             font-weight: 500;
-             color: #e0e0e0;
-             margin-bottom: 0.8rem;
-             letter-spacing: -0.2px;
-        }
-
-        /* Paragraph Text */
-        p {
-            font-size: 1.1rem;
-            color: #d0d0d0; /* Slightly less bright than pure white */
-            max-width: 650px; /* Improve readability */
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center; /* Center align paragraphs by default */
-            margin-bottom: 1rem;
-        }
-
-        /* Links */
-        a {
-            color: #87CEFA; /* Light Sky Blue - VisionOS often uses blues/cyans */
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease, text-shadow 0.3s ease;
-        }
-
-        a:hover, a:focus {
-            color: #ffffff;
-            text-shadow: 0 0 8px rgba(135, 206, 250, 0.7); /* Glow effect */
-            outline: none; /* Remove default outline, rely on visual cue */
-        }
-
-        /* Hero Section Specifics */
-        #hero h2 {
-            font-size: 3.5rem; /* Even larger for hero */
-            font-weight: 700;
-            margin-bottom: 0.8rem;
-             background: linear-gradient(90deg, #ffffff, #d0d0ff); /* Subtle gradient for main title */
-             -webkit-background-clip: text;
-             -webkit-text-fill-color: transparent;
-        }
-        #hero p {
-            font-size: 1.3rem;
-            color: #e5e5e5;
-            margin-bottom: 2rem;
-        }
-
-        /* CTA Button */
-        .cta-button {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2); /* Translucent white */
-            color: #ffffff;
-            padding: 14px 30px;
-            border-radius: 15px; /* Pill shape */
-            font-weight: 600;
-            font-size: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        
+        .close-button {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            transition: transform 0.2s ease;
         }
-
-        .cta-button:hover, .cta-button:focus {
-            background-color: rgba(255, 255, 255, 0.4); /* Brighter on hover */
-            transform: scale(1.05) translateY(-2px); /* Lift and scale */
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            color: #ffffff; /* Ensure text color stays white */
-             text-shadow: none; /* Remove glow from link style */
-             outline: none;
+        
+        .close-button:hover {
+            transform: scale(1.1);
         }
-
-        /* Services Section - Simplified List */
-        .service-list {
-            margin-top: 1.5rem;
-            text-align: left; /* Align service items left for better list readability */
+        
+        .collab-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 80px 20px;
         }
-
-        .service-item {
-            background: rgba(255, 255, 255, 0.05); /* Very subtle background differentiation */
-            border-radius: 15px;
-            padding: 1.5rem 2rem;
-            margin-bottom: 1.5rem;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-             border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .service-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(1.02); /* Subtle scale on hover */
-        }
-
-        .service-item h3 {
-            color: #ffffff; /* Make service titles stand out more */
-            margin-bottom: 0.5rem;
-        }
-
-        .service-item p {
-            text-align: left; /* Align paragraph text left */
-            font-size: 1rem;
-            color: #c0c0c0;
-            margin-bottom: 0; /* Remove bottom margin within item */
-             max-width: none; /* Allow full width within item */
-        }
-
-
-        /* Contact Section Specifics */
-        #contact p {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Footer inside the window */
-        .site-footer {
+        
+        .collab-header {
             text-align: center;
-            padding-top: 2rem; /* Space above footer */
-            margin-top: 1rem; /* Ensure margin even if last section has less padding */
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.5); /* Muted color */
-             border-top: 1px solid rgba(255, 255, 255, 0.1); /* Separator line */
+            margin-bottom: 60px;
         }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-             body {
-                 padding: 3vh 3vw; /* Less padding on smaller screens */
-                 align-items: flex-start; /* Align window to top on mobile */
-                 min-height: 100vh; /* Ensure it still tries to fill height */
-             }
-            .spatial-window {
-                padding: 30px 35px;
-                border-radius: 25px;
-                max-height: 94vh; /* Allow more height usage */
-                 margin-top: 3vh; /* Add some top margin */
-            }
-            h2 { font-size: 2rem; }
-            #hero h2 { font-size: 2.8rem; }
-            #hero p { font-size: 1.1rem; }
-            p { font-size: 1rem; }
-             .cta-button { padding: 12px 25px; font-size: 0.95rem; }
-             .service-item { padding: 1rem 1.5rem; }
+        
+        .collab-photo {
+            width: 120px;
+            height: 120px;
+            background: #4B5563;
+            border-radius: 50%;
+            margin: 0 auto 40px;
+            position: relative;
         }
-
-         @media (max-width: 480px) {
-             .spatial-window {
-                 padding: 25px 20px;
-                 border-radius: 20px;
-             }
-             h2 { font-size: 1.7rem; }
-             #hero h2 { font-size: 2.2rem; }
-             p { font-size: 0.95rem; }
-             .service-item h3 { font-size: 1.2rem; }
-         }
-
+        
+        .collab-photo::before {
+            content: '👤';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+        }
+        
+        .sticker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #FDE047;
+            border-radius: 50%;
+            right: -10px;
+            bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sticker::after {
+            content: '😊';
+            font-size: 24px;
+        }
+        
+        .collab-intro {
+            font-size: 24px;
+            line-height: 1.4;
+            color: #1F2937;
+            margin-bottom: 40px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 80px;
+        }
+        
+        .primary-button {
+            background: #3B82F6;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .primary-button:hover {
+            background: #2563EB;
+            transform: translateY(-1px);
+        }
+        
+        .secondary-button {
+            background: #E5E7EB;
+            color: #1F2937;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .secondary-button:hover {
+            background: #D1D5DB;
+            transform: translateY(-1px);
+        }
+        
+        .featured-project {
+            margin-bottom: 80px;
+        }
+        
+        .project-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #FEE2E2, #FBBF24);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-caption {
+            text-align: center;
+            font-size: 14px;
+            color: #6B7280;
+        }
+        
+        .content-section {
+            margin-bottom: 60px;
+        }
+        
+        .section-heading {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1F2937;
+            margin-bottom: 24px;
+            line-height: 1.3;
+        }
+        
+        .section-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #4B5563;
+            margin-bottom: 20px;
+        }
+        
+        .services-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .service-item {
+            text-align: center;
+        }
+        
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            border-radius: 12px;
+        }
+        
+        .service-icon.blue { background: #3B82F6; }
+        .service-icon.orange { background: #F97316; }
+        .service-icon.green { background: #10B981; }
+        
+        .service-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 8px;
+        }
+        
+        .service-subtitle {
+            font-size: 14px;
+            color: #6B7280;
+            line-height: 1.4;
+        }
+        
+        .cta-button {
+            width: 100%;
+            background: #E5E7EB;
+            color: #1F2937;
+            border: none;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 60px;
+            transition: all 0.2s ease;
+        }
+        
+        .cta-button:hover {
+            background: #D1D5DB;
+            transform: translateY(-2px);
+        }
+        
+        .final-cta {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+        
+        .calendar-icon {
+            width: 40px;
+            height: 40px;
+            background: #F3F4F6;
+            border-radius: 8px;
+            margin: 0 auto 24px;
+        }
+        
+        .location-text {
+            text-align: center;
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 16px;
+        }
+        
+        .signature {
+            font-family: 'Kalam', cursive;
+            font-size: 24px;
+            color: #1F2937;
+            text-align: center;
+        }
+        
+        /* Blur effect */
+        .blurred-bg {
+            filter: blur(4px);
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
-
-    <!-- The main content lives inside this spatial window -->
-    <div class="spatial-window">
-
-        <main class="site-main">
-            <!-- Hero Section -->
-            <section id="hero" class="content-section">
-                <!-- No container needed, window provides it -->
-                <h2>Ethereal Interface</h2>
-                <p>Experience tranquility through fluid design and subtle motion.</p>
-                <a href="#contact" class="cta-button">Connect</a>
-            </section>
-
-            <!-- About Section -->
-            <section id="about" class="content-section">
-                <h2>The Vision</h2>
-                <p>
-                    This is a demonstration of spatial UI principles applied to the web. Focusing on depth, light, and material to create an interface that feels both advanced and calmingly natural. Like looking through a window into a digital space.
-                </p>
-            </section>
-
-            <!-- Services/Features Section -->
-            <section id="services" class="content-section">
-                <h2>Core Elements</h2>
-                <div class="service-list">
-                    <div class="service-item">
-                        <h3>Glassmorphism</h3>
-                        <p>Utilizing translucent, blurred backgrounds to establish hierarchy and context, mimicking frosted glass.</p>
+    <div class="main-container" id="mainContainer">
+        <h1 class="main-heading">Welcome to my corner on the internet :)</h1>
+        
+        <div class="icon-grid">
+            <div class="icon-item" data-project="portal">
+                <div class="icon portal-icon"></div>
+                <div class="icon-label">Portal</div>
+            </div>
+            
+            <div class="icon-item" data-project="droppable">
+                <div class="icon droppable-icon"></div>
+                <div class="icon-label">Droppable</div>
+            </div>
+            
+            <div class="icon-item" data-project="appstacks">
+                <div class="icon app-stacks-icon">
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                    <div class="cube"></div>
+                </div>
+                <div class="icon-label">App Stacks</div>
+            </div>
+            
+            <div class="icon-item" data-project="collab">
+                <div class="icon collab-icon"></div>
+                <div class="icon-label">Collab with Roman</div>
+            </div>
+        </div>
+        
+        <p class="intro-text">
+            Hey there! I'm Roman - a Product Designer with a burning desire to build cool stuff. 
+            Currently, I run tools for creatives - Portal and Droppable, share awesome stories 
+            through App Stacks, and collab with visionaries to bring even more ideas to life.
+        </p>
+        
+        <div class="footer">
+            <div class="social-links" id="socialLinks">
+                <a href="#" class="social-link reach-out">💬</a>
+                <a href="#" class="social-link twitter">𝕏</a>
+                <a href="#" class="social-link threads">@</a>
+            </div>
+            <div class="footer-text">All Right Reserved</div>
+        </div>
+        
+        <div class="carousel-dots">
+            <div class="dot" data-project="portal"></div>
+            <div class="dot" data-project="droppable"></div>
+            <div class="dot" data-project="appstacks"></div>
+        </div>
+    </div>
+    
+    <!-- Detail Cards -->
+    <div class="detail-card" id="portalCard">
+        <div class="card-visuals">
+            <div class="mockup mockup-left">
+                <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Select Project type</div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
+                        <div style="font-size: 12px;">📊 Fixed price</div>
                     </div>
-                    <div class="service-item">
-                        <h3>Fluid Motion</h3>
-                        <p>Subtle, physics-inspired animations provide feedback and guide the eye without overwhelming the senses.</p>
+                    <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
+                        <div style="font-size: 12px;">📅 Month rate</div>
                     </div>
-                    <div class="service-item">
-                        <h3>Harmonious Lighting</h3>
-                        <p>Soft shadows and highlights create a sense of depth, making elements feel tangible and layered in space.</p>
+                    <div style="padding: 12px; background: #F3F4F6; border-radius: 8px;">
+                        <div style="font-size: 12px;">🔄 Subscription</div>
                     </div>
                 </div>
-            </section>
-
-            <!-- Contact Section -->
-            <section id="contact" class="content-section">
-                <h2>Get In Touch</h2>
-                <p>Curious about this design or want to collaborate?</p>
-                <p>
-                    Send an Email: <a href="mailto:spatial-design@example.com">spatial-design@example.com</a>
+            </div>
+            <div class="mockup mockup-right">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">0-1 Mobile app design for a food company app</div>
+                <div style="font-size: 24px; font-weight: 700; color: #3B82F6; margin-bottom: 20px;">€1500</div>
+                <button style="width: 100%; background: #3B82F6; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer;">Pay 1500€</button>
+            </div>
+        </div>
+        <h3 class="card-title">Portal</h3>
+        <p class="card-subtitle">A new way for creative freelancers to sell their services with finesse</p>
+        <button class="card-button">View Portal</button>
+    </div>
+    
+    <div class="detail-card" id="droppableCard">
+        <div class="card-visuals">
+            <div class="mockup mockup-left" style="background: #1F2937; color: white;">
+                <div style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Files</div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                    <div>📁 Video assets.zip</div>
+                    <div>🖼️ Cover_bgr.png</div>
+                    <div>🎥 Demo_preview.mp4</div>
+                    <div>🎬 Animation_L.mp4</div>
+                </div>
+            </div>
+            <div class="mockup mockup-right" style="background: #1F2937; color: white;">
+                <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Send files</div>
+                <div style="font-size: 14px; margin-bottom: 16px;">3 files, 186.8 MB available</div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; margin-bottom: 20px;">
+                    <div>Team Pixawap</div>
+                    <div>John Johnson</div>
+                </div>
+                <button style="width: 100%; background: #10B981; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer;">Send</button>
+            </div>
+        </div>
+        <h3 class="card-title">Droppable</h3>
+        <p class="card-subtitle">Native macOS app for sharing large files</p>
+        <button class="card-button">View Droppable</button>
+    </div>
+    
+    <div class="detail-card" id="appstacksCard">
+        <div class="card-visuals">
+            <div style="width: 400px; height: 250px; background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 30px; position: relative;">
+                <h4 style="font-size: 18px; margin-bottom: 20px;">Discover whats under the hood of favorite apps</h4>
+                <input type="text" placeholder="Search..." style="width: 100%; padding: 10px; border: 1px solid #E5E7EB; border-radius: 8px; margin-bottom: 16px;">
+                <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                    <span style="padding: 6px 12px; background: #EFF6FF; color: #3B82F6; border-radius: 6px; font-size: 12px;">AI</span>
+                    <span style="padding: 6px 12px; background: #F0FDF4; color: #10B981; border-radius: 6px; font-size: 12px;">Productivity</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="padding: 12px; background: #F9FAFB; border-radius: 8px;">
+                        <div style="font-size: 14px; font-weight: 500;">Your Notes</div>
+                    </div>
+                    <div style="padding: 12px; background: #F9FAFB; border-radius: 8px;">
+                        <div style="font-size: 14px; font-weight: 500;">Your Tasks</div>
+                    </div>
+                </div>
+                <!-- Floating icons -->
+                <div style="position: absolute; top: -20px; right: -20px; width: 40px; height: 40px; background: #3B82F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">🔋</div>
+                <div style="position: absolute; bottom: -20px; left: -20px; width: 40px; height: 40px; background: #F97316; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">&lt;/&gt;</div>
+                <div style="position: absolute; top: 50%; right: -30px; width: 40px; height: 40px; background: #8B5CF6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🎨</div>
+            </div>
+        </div>
+        <h3 class="card-title">App Stacks</h3>
+        <p class="card-subtitle">Directory of the best designed apps, their tech stacks and makers behind them</p>
+        <button class="card-button">View App Stacks</button>
+    </div>
+    
+    <div class="detail-card" id="collabCard">
+        <div class="card-visuals" style="height: 200px;">
+            <div style="position: relative;">
+                <div class="collab-photo"></div>
+                <div class="sticker"></div>
+                <!-- Stickers around photo -->
+                <div style="position: absolute; top: -20px; left: -60px; background: #8B5CF6; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">Export to SVG</div>
+                <div style="position: absolute; top: -20px; right: -80px; background: white; color: #8B5CF6; padding: 8px 16px; border-radius: 20px; font-size: 12px; border: 2px solid #8B5CF6;">Should designers code?</div>
+                <div style="position: absolute; bottom: 20px; left: -70px; background: #8B5CF6; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px;">Detach component</div>
+            </div>
+        </div>
+        <p style="font-family: 'Kalam', cursive; font-size: 18px; text-align: center; line-height: 1.4; margin-bottom: 24px;">
+            Design is my bread and butter. Each idea deserves a unique design solution, and I'm here to help you with that.
+        </p>
+        <button class="card-button">View Design Services</button>
+    </div>
+    
+    <!-- Collab Modal -->
+    <div class="collab-modal" id="collabModal">
+        <div class="close-button" onclick="closeCollabModal()">✕</div>
+        
+        <div class="collab-content">
+            <div class="collab-header">
+                <div style="position: relative; display: inline-block;">
+                    <div class="collab-photo"></div>
+                    <div class="sticker"></div>
+                </div>
+                <p class="collab-intro">
+                    I'm Roman. I design things that serve a purpose and evoke delight. 
+                    I simplify the complex, craft memorability, and build experiences that last.
                 </p>
-            </section>
-
-             <!-- Footer integrated into the window -->
-            <footer class="site-footer">
-                <p>&copy; <span id="current-year"></span> Spatial Demo. All rights reserved.</p>
-            </footer>
-
-        </main>
-
-    </div> <!-- End of spatial-window -->
-
-
-    <!-- JavaScript for dynamic year and scroll animations -->
+                <div class="button-group">
+                    <button class="primary-button">Reach out</button>
+                    <button class="secondary-button">Book a call</button>
+                </div>
+            </div>
+            
+            <div class="featured-project">
+                <div class="project-image"></div>
+                <p class="project-caption">Portal - Client view of a freelance project</p>
+            </div>
+            
+            <div class="content-section">
+                <h2 class="section-heading">Product design with intention, user-centricity, and scalability in mind</h2>
+                <p class="section-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <p class="section-text">
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </div>
+            
+            <div class="content-section">
+                <h2 class="section-heading">The only requirement is awesomeness - at the idea, redesign, or reinvention stage</h2>
+                <p class="section-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <p class="section-text">
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </div>
+            
+            <div class="services-list">
+                <div class="service-item">
+                    <div class="service-icon blue"></div>
+                    <h3 class="service-title">Product Design</h3>
+                    <p class="service-subtitle">0 -> 1 Product Design for Web, Mobile, Desktop platforms</p>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon orange"></div>
+                    <h3 class="service-title">Website Design</h3>
+                    <p class="service-subtitle">Website design & development in Framer or Webflow</p>
+                </div>
+                <div class="service-item">
+                    <div class="service-icon green"></div>
+                    <h3 class="service-title">Custom Iconography & UI Illustration</h3>
+                    <p class="service-subtitle">Including Rive or SVG animation</p>
+                </div>
+            </div>
+            
+            <button class="cta-button">Tell me about your project...</button>
+            
+            <div class="content-section">
+                <p class="section-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <p class="section-text">
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+                <p class="section-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                </p>
+                <p class="section-text">
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
+                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+            </div>
+            
+            <div class="final-cta">
+                <div class="calendar-icon"></div>
+                <h2 class="section-heading">Let's build something awesome together</h2>
+                <p class="section-text">
+                    I'm excited to hear about what you're building. Reach out below to get the ball rolling, 
+                    and potentially build something really special together.
+                </p>
+                <div class="button-group">
+                    <button class="primary-button">Reach out</button>
+                    <button class="secondary-button">Book a call</button>
+                </div>
+            </div>
+            
+            <p class="location-text">
+                I'm located in Berlin, Germany timezone (CET). I'll get back to you as soon as I can.
+            </p>
+            <p class="signature">Cheers, Roman Tesluk</p>
+        </div>
+    </div>
+    
     <script>
-        // Update copyright year
-        document.getElementById('current-year').textContent = new Date().getFullYear();
-
-        // Intersection Observer for scroll animations
-        const sections = document.querySelectorAll('.content-section');
-
-        const observerOptions = {
-            root: document.querySelector('.spatial-window'), // Observe within the scrolling window
-            rootMargin: '0px',
-            threshold: 0.1 // Trigger when 10% of the element is visible
+        // Elements
+        const mainHeading = document.querySelector('.main-heading');
+        const introText = document.querySelector('.intro-text');
+        const iconItems = document.querySelectorAll('.icon-item');
+        const dots = document.querySelectorAll('.dot');
+        const footer = document.querySelector('.footer');
+        const socialLinks = document.getElementById('socialLinks');
+        const footerText = document.querySelector('.footer-text');
+        const collabModal = document.getElementById('collabModal');
+        const mainContainer = document.getElementById('mainContainer');
+        
+        // Detail cards
+        const detailCards = {
+            portal: document.getElementById('portalCard'),
+            droppable: document.getElementById('droppableCard'),
+            appstacks: document.getElementById('appstacksCard'),
+            collab: document.getElementById('collabCard')
         };
-
-        const observerCallback = (entries, observer) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    // Add a staggered delay based on the element's index
-                    entry.target.style.setProperty('--animation-delay', `${index * 0.15}s`);
-                    entry.target.classList.add('is-visible');
-                    // Optional: Unobserve after animation to save resources
-                    // observer.unobserve(entry.target);
+        
+        let currentFocusedItem = null;
+        
+        // Icon hover/focus functionality
+        function focusItem(projectName) {
+            // If same item is already focused, do nothing
+            if (currentFocusedItem === projectName) return;
+            
+            // Clear previous focus
+            if (currentFocusedItem) {
+                unfocusAll();
+            }
+            
+            currentFocusedItem = projectName;
+            
+            // Blur other items and text
+            iconItems.forEach(item => {
+                if (item.dataset.project === projectName) {
+                    item.classList.add('focused');
+                } else {
+                    item.classList.add('blurred');
                 }
-                // Optional: Reset animation if element scrolls out of view
-                // else {
-                //     entry.target.classList.remove('is-visible');
-                // }
             });
-        };
-
-        const intersectionObserver = new IntersectionObserver(observerCallback, observerOptions);
-
-        sections.forEach(section => {
-            intersectionObserver.observe(section);
+            
+            mainHeading.classList.add('blurred-bg');
+            introText.classList.add('blurred-bg');
+            
+            // Show detail card
+            if (detailCards[projectName]) {
+                detailCards[projectName].classList.add('visible');
+            }
+        }
+        
+        function unfocusAll() {
+            currentFocusedItem = null;
+            
+            iconItems.forEach(item => {
+                item.classList.remove('focused', 'blurred');
+            });
+            
+            mainHeading.classList.remove('blurred-bg');
+            introText.classList.remove('blurred-bg');
+            
+            // Hide all detail cards
+            Object.values(detailCards).forEach(card => {
+                card.classList.remove('visible');
+            });
+        }
+        
+        // Icon hover events
+        iconItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                focusItem(item.dataset.project);
+            });
         });
-
+        
+        // Unfocus when mouse leaves the icon grid area
+        document.addEventListener('mousemove', (e) => {
+            const iconGrid = document.querySelector('.icon-grid');
+            const detailCardVisible = Object.values(detailCards).some(card => card.classList.contains('visible'));
+            
+            if (detailCardVisible) {
+                const rect = iconGrid.getBoundingClientRect();
+                const expandedRect = {
+                    top: rect.top - 300,
+                    bottom: rect.bottom + 100,
+                    left: rect.left - 100,
+                    right: rect.right + 100
+                };
+                
+                if (e.clientX < expandedRect.left || e.clientX > expandedRect.right ||
+                    e.clientY < expandedRect.top || e.clientY > expandedRect.bottom) {
+                    unfocusAll();
+                }
+            }
+        });
+        
+        // Carousel dots
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                focusItem(dot.dataset.project);
+            });
+        });
+        
+        // Footer social links
+        footerText.addEventListener('mouseenter', () => {
+            socialLinks.classList.add('visible');
+        });
+        
+        footer.addEventListener('mouseleave', () => {
+            socialLinks.classList.remove('visible');
+        });
+        
+        // Collab modal
+        iconItems.forEach(item => {
+            if (item.dataset.project === 'collab') {
+                item.addEventListener('click', () => {
+                    openCollabModal();
+                });
+            }
+        });
+        
+        // Also open modal when clicking the detail card button
+        document.querySelector('#collabCard .card-button').addEventListener('click', () => {
+            openCollabModal();
+        });
+        
+        function openCollabModal() {
+            mainContainer.style.opacity = '0';
+            setTimeout(() => {
+                collabModal.classList.add('visible');
+            }, 300);
+        }
+        
+        function closeCollabModal() {
+            collabModal.classList.remove('visible');
+            setTimeout(() => {
+                mainContainer.style.opacity = '1';
+            }, 300);
+        }
     </script>
-
 </body>
 </html>
